@@ -35,13 +35,15 @@ if(isset($_POST['signup-submit'])){
         $sql="SELECT uidUsers FROM users WHERE uidUsers=?";
         $stmt=mysqli_stmt_init($mysqli);
         if(!mysqli_stmt_prepare($stmt, $sql)){
+            printf("[004] [%d] %s\n", mysqli_stmt_errno($stmt), mysqli_stmt_error($stmt));die;
             header("Location: ../register.php?error=sqlerror");
+            
             exit();
         }
         else{
             mysqli_stmt_bind_param($stmt, "s", $username);
             mysqli_stmt_execute($stmt);
-            mysqli_stmt_store_result_($stmt);
+            mysqli_stmt_store_result($stmt);
             $resultCheck=mysqli_stmt_num_rows($stmt);
             if($resultCheck>0){
                 header("Location: ../register.php?error=usertaken=".$email);
@@ -53,13 +55,14 @@ if(isset($_POST['signup-submit'])){
                 $stmt=mysqli_stmt_init($mysqli);
                 if(!mysqli_stmt_prepare($stmt, $sql)){
                     header("Location: ../register.php?error=sqlerror");
-                    exit();                    
+                    exit();  
+                    
                 }
                 else{
                     $hashedPwd=password_hash($password, PASSWORD_DEFAULT);
                     mysqli_stmt_bind_param($stmt, "issss", $userId, $username, $email, $userRole, $hashedPwd);
                     mysqli_stmt_execute($stmt);
-                    mysqli_stmt_store_result_($stmt);
+                    mysqli_stmt_store_result($stmt);
                     header("Location: ../register.php?signup=success");
                     exit();
                 }
