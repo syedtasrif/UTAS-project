@@ -9,11 +9,11 @@ if(isset($_POST['signup-submit'])){
     $userId=$_POST['id'];
     $userRole=$_POST['role'];
 
-   /* if(empty($username) || empty($email) || empty($password) || empty($passwordRepeat) || empty($userId) || empty($userRole)){
+   if(empty($username) || empty($email) || empty($password) || empty($passwordRepeat) || empty($userId) || empty($userRole)){
         header("Location: ../register.php?error=emptyfields&uid=".$username."&mail=".$email);
         exit();
 
-    }*/
+    }
     if(!filter_var($email, FILTER_VALIDATE_EMAIL) && !preg_match("/^[a-zA-Z0-9]*$/", $username)){
         header("Location: ../register.php?error=invalidmail&uid");
         exit();
