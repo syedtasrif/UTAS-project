@@ -1,13 +1,9 @@
 <?php
 //connect to mysql
+$mysqli = new mysqli('localhost', 'smat', '555867', 'smat');
 
-$servername="localhost";
-$dBUsername="smat";
-$dBPassword="555867";
-$dBName="smat";
-
-$conn=mysqli_connect($servername, $dBUsername, $dBPassword, $dBName);
-
-if(!$conn){
-    die("Connection failed: ".mysqli_connect_error());
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
 }
+?>
