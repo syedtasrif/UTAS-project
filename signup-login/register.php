@@ -28,9 +28,9 @@
                         <label for="email"><b>Email</b></label>
                         <input type="text" placeholder="Enter Email" name="mail">
                         <label for="psw"><b>Password</b></label>
-                        <input type="password" placeholder="Enter Password" name="psw">
+                        <input type="password" placeholder="Enter Password" name="pwd">
                         <label for="psw-repeat"><b>Confirm Password</b></label>
-                        <input type="password" placeholder="Repeat Password" name="psw-repeat">
+                        <input type="password" placeholder="Repeat Password" name="pwd-repeat">
                         <button type="submit" name="signup-submit">Sign Up</button>
                     </form>
                 </section>
