@@ -1,0 +1,11 @@
+.navbar-inverse .navbar-brand:hover,
+.navbar-inverse .navbar-brand:focus {
+  color: #ffbbbc;
+}
+        body {
+    padding-top: 70px;
+    padding-bottom:100px;
+    }
+#allocate{
+    display: none;
+}
