@@ -8,6 +8,8 @@ if(isset($_POST['signup-submit'])){
     $passwordRepeat=$_POST['pwd-repeat'];
     $userId=$_POST['id'];
     $userRole=$_POST['role'];
+    $userQualification=$_POST['academicQual'];
+    $userExpertise=$_POST['expertise'];
 
    if(empty($username) || empty($email) || empty($password) || empty($passwordRepeat) || empty($userId) || empty($userRole)){
         header("Location: ../register.php?error=emptyfields&uid=".$username."&mail=".$email);
@@ -51,7 +53,7 @@ if(isset($_POST['signup-submit'])){
                 
             }
             else{
-                $sql="INSERT INTO users (idUsers, uidUsers, emailUsers, roleUsers, pwdUsers) VALUES (?, ?, ?, ?, ?)";
+                $sql="INSERT INTO users (idUsers, uidUsers, emailUsers, roleUsers, pwdUsers, qualUsers, expertUsers) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 $stmt=mysqli_stmt_init($mysqli);
                 if(!mysqli_stmt_prepare($stmt, $sql)){
                     header("Location: ../register.php?error=sqlerror");
@@ -60,10 +62,10 @@ if(isset($_POST['signup-submit'])){
                 }
                 else{
                     $hashedPwd=password_hash($password, PASSWORD_DEFAULT);
-                    mysqli_stmt_bind_param($stmt, "issss", $userId, $username, $email, $userRole, $hashedPwd);
+                    mysqli_stmt_bind_param($stmt, "issssss", $userId, $username, $email, $userRole, $hashedPwd, $userQualification, $userExpertise);
                     mysqli_stmt_execute($stmt);
                     mysqli_stmt_store_result($stmt);
-                    header("Location: ../register.php?signup=success");
+                    header("Location: ../login.php?signup=success");
                     exit();
                 }
             }

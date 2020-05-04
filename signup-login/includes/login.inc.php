@@ -29,9 +29,9 @@ if(isset($_POST['login-submit'])){
                 }
                 else if($pwdCheck==true){
                     session_start();
-                    $_session['userId']=$row['idUsers'];
-                    $_session['userUid']=$row['uidUsers'];
-                    $_session['userRole']=$row['roleUsers'];
+                    $_SESSION['userId']=$row['idUsers'];
+                    $_SESSION['userUid']=$row['uidUsers'];
+                    $_SESSION['userRole']=$row['roleUsers'];
 
                     header("Location: ../cms-dashboard.php?login=success");
                     exit();

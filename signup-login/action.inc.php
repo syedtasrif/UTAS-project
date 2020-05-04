@@ -16,10 +16,10 @@ if($input["action"]==='edit'){
         lecturer='".$lecturer."',
         semester='".$semester."'
         WHERE id= ".$input['id'];
-    }
+}
 if($input["action"]==='delete'){
     $query="DELETE FROM units WHERE id=".$input["id"];
-    
+
 }
 mysqli_query($conn, $query);
 echo mysqli_error($conn);
