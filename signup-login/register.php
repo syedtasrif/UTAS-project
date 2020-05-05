@@ -23,18 +23,16 @@
 
                         <label for="name"><b>Full Name</b></label>
                         <input type="text" placeholder="Your Name.." name="uid" required>
-                        <label for="userID"><b>User ID</b></label>
-
-                        <input type="text" placeholder="ex. 12345" name="id" required>
+                        
                         <label for="Role"><b>I am a</b></label>
-                        <select name="role" id="users">
+                        <select name="role" id="roles">
                             <option value="">Select</option>
                             <option value="staff">Staff</option>
                             <option value="student">Student</option>
                         </select>
                         <div class="staff">
                             <label for="Position"><b>Highest Academic Qualification</b></label>
-                            <select name="academicQual" id="users">
+                            <select name="academicQual" id="qualification">
                                 <option value="Bachelors">Bachelors Degree</option>
                                 <option value="Masters">Masters Degree</option>
                                 <option value="PhD">PhD</option>
@@ -157,7 +155,7 @@
 
 
             $(document).ready(function(){
-                $("#users").change(function(){
+                $("#roles").change(function(){
                     $(this).find("option:selected").each(function(){
                         var optionValue = $(this).attr("value");
                         if(optionValue){

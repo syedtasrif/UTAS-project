@@ -49,11 +49,55 @@ include('db_conn.php'); //db connection
                                 <label>Unit Name</label>
                                 <input type="text" class="form-control" id="inputName" name="unit_name">
                                 <br/>
-                                <label>Lecturer</label>
-                                <input type="text" class="form-control" id="inputLec" name="lecturer">
+                                <label>Unit Coordinator</label>
+                                <input type="text" class="form-control" id="inputUC" name="unit_coordinator">
+                                <br/>
+                                <label>Unit Lecturer</label>
+                                <input type="text" class="form-control" id="inputLec" name="unit_lecturer">
                                 <br/>
                                 <label>Semester</label>
-                                <input type="text" class="form-control" id="inputSem" name="semester">
+                                <select class="form-control" id="inputSem" name="unit_semester">
+                                    <option value="">Choose</option>
+                                    <option value="Semester 1">Semester 1</option>
+                                    <option value="Semester 2">Semester 2</option>
+                                    <option value="Winter School">Winter School</option>
+                                    <option value="Spring School">Spring School</option>
+                                </select>
+                                <br/>
+                                <label>Campus</label>
+                                <select class="form-control" id="inputCamp" name="unit_campus">
+                                    <option value="">Choose</option>
+                                    <option value="Pandora">Pandora</option>
+                                    <option value="Rivendell">Rivendell</option>
+                                    <option value="Neverland">Neverland</option>
+                                </select>
+                                <br/>
+                                <label>Lecture Day</label>
+                                <select class="form-control" id="inputLecDay" name="lecture_day">
+                                    <option value="">Choose</option>
+                                    <option value="Monday">Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                </select>
+                                <br/>
+                                <label>Lecture Time</label>
+                                <div class="form-group">
+                                    <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                                        <input type="text" id="inputTime" name="lecture_time" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
+                                        <span class="input-group-addon" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                    $(function () {
+                                        $('#datetimepicker3').datetimepicker({
+                                            format: 'LT'
+                                        });
+                                    });
+                                </script>
                                 <br/>
                                 <a type="submit" class="btn btn-success" name="addButton" id="addButton">Add</a>
                             </form>
@@ -484,19 +528,22 @@ include('db_conn.php'); //db connection
                                             <th>ID</th>
                                             <th>Unit Code</th>
                                             <th>Unit Name</th>
-                                            <th>Lecturer</th>
                                             <th>Semester</th>
-
+                                            <th>Campus</th>
+                                            <th>Unit Coordinator</th>
+                                            <th>Unit Lecturer</th>
+                                            <th>Lecture Day</th>
+                                            <th>Lecture Time</th>
                                         </tr>
 
 
                                         <?php
-                                        $sql= "SELECT * FROM units ORDER BY id DESC;";                    
+                                        $sql= "SELECT * FROM units ORDER BY unit_id DESC;";                    
                                         $result= mysqli_query($conn, $sql);
 
 
                                         while($row=mysqli_fetch_assoc($result)){
-                                            echo "<tr><td>".$row["id"]."</td><td>".$row["unit_code"]."</td><td>".$row["unit_name"]."</td><td>".$row["lecturer"]."</td><td>".$row["semester"]."</td></tr>";
+                                            echo "<tr><td>".$row["unit_id"]."</td><td>".$row["unit_code"]."</td><td>".$row["unit_name"]."</td><td>".$row["unit_semester"]."</td><td>".$row["unit_campus"]."</td><td>".$row["unit_coordinator"]."</td><td>".$row["unit_lecturer"]."</td><td>".$row["lecture_day"]."</td><td>".$row["lecture_time"]."</td></tr>";
                                         }
                                         echo "</table>";                 
 
@@ -700,7 +747,12 @@ include('db_conn.php'); //db connection
                     var inputName = $("#inputName").val();
                     var inputLec = $("#inputLec").val();
                     var inputSem = $("#inputSem").val();
-                    if (inputCode == '' || inputName == '' || inputLec == '' || inputSem == '') {
+                    var inputUC = $("#inputUC").val();
+                    var inputTime = $("#inputTime").val();
+                    var inputCamp = $("#inputCamp").val();
+                    var inputLecDay = $("#inputLecDay").val();
+                    
+                    if (inputCode == '' || inputName == '' || inputLec == '' || inputSem == '' || inputUC == '' || inputTime == '' || inputCamp == '' || inputLecDay == '') {
                         alert("Insertion Failed Some Fields are Blank....!!");
                     } else {
                         // Returns successful data submission message when the entered information is stored in database.
@@ -708,7 +760,11 @@ include('db_conn.php'); //db connection
                             inputCode1: inputCode,
                             inputName1: inputName,
                             inputLec1: inputLec,
-                            inputSem1: inputSem
+                            inputSem1: inputSem,
+                            inputUC1: inputUC,
+                            inputTime1: inputTime,
+                            inputCamp1: inputCamp,
+                            inputLecDay1: inputLecDay
                         }, function(data) {
                             alert(data);
                             $('#add-form')[0].reset(); // To reset form fields

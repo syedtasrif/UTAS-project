@@ -9,7 +9,7 @@ if(isset($_POST['login-submit'])){
         exit();
     }
     else{
-        $sql="SELECT * FROM users WHERE uidUsers=? OR emailUsers=?;";
+        $sql="SELECT * FROM users WHERE user_name=? OR user_email=?;";
         $stmt= mysqli_stmt_init($mysqli);
         if(!mysqli_stmt_prepare($stmt, $sql)){
             
@@ -22,16 +22,16 @@ if(isset($_POST['login-submit'])){
             $result=mysqli_stmt_get_result($stmt);
             if($row=mysqli_fetch_assoc($result)){
                 //printf("[004] [%d] %s\n", mysqli_stmt_errno($stmt), mysqli_stmt_error($stmt));die;
-                $pwdCheck= password_verify($password, $row['pwdUsers']);
+                $pwdCheck= password_verify($password, $row['user_pwd']);
                 if($pwdCheck==false){
                     header("Location: ../login.php?error=wrongpwd");
                     exit();
                 }
                 else if($pwdCheck==true){
                     session_start();
-                    $_SESSION['userId']=$row['idUsers'];
-                    $_SESSION['userUid']=$row['uidUsers'];
-                    $_SESSION['userRole']=$row['roleUsers'];
+                    
+                    $_SESSION['userUid']=$row['user_name'];
+                    $_SESSION['userRole']=$row['user_role'];
 
                     header("Location: ../cms-dashboard.php?login=success");
                     exit();

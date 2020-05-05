@@ -5,7 +5,7 @@ include('db_conn.php'); //db connection
 
 
     $search=mysqli_real_escape_string($conn, $_POST['user_input']);
-    $sql="SELECT * FROM units WHERE unit_code LIKE'%$search%' OR unit_name LIKE '%$search%' OR lecturer LIKE '%$search%'";
+    $sql="SELECT * FROM units WHERE unit_code LIKE'%$search%' OR unit_name LIKE '%$search%' OR unit_lecturer LIKE '%$search%'";
     $result=mysqli_query($conn, $sql);
     $queryResult= mysqli_num_rows($result);
     
@@ -23,11 +23,11 @@ include('db_conn.php'); //db connection
     </tr>
     <tr>
     <th>Lecturer</th>
-    <td>".$row["lecturer"]."</td>
+    <td>".$row["unit_lecturer"]."</td>
     </tr>
     <tr>
     <th>Semester</th>
-    <td>".$row["semester"]."</td>
+    <td>".$row["unit_semester"]."</td>
     </tr>
     <tr>
     <th><br></th>
