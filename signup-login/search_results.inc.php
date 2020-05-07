@@ -5,11 +5,11 @@ include('db_conn.php'); //db connection
 
 
     $search=mysqli_real_escape_string($conn, $_POST['user_input']);
-    $sql="SELECT * FROM units WHERE unit_code LIKE'%$search%' OR unit_name LIKE '%$search%' OR unit_lecturer LIKE '%$search%'";
+    $sql="SELECT * FROM units WHERE unit_code LIKE'%$search%' OR unit_name LIKE '%$search%' OR unit_campus LIKE '%$search%' OR unit_semester LIKE '%$search%'";
     $result=mysqli_query($conn, $sql);
     $queryResult= mysqli_num_rows($result);
     
-    echo "There are ".$queryResult."results!";
+    
 
     if($queryResult>0){
         while($row=mysqli_fetch_assoc($result)){
@@ -22,8 +22,8 @@ include('db_conn.php'); //db connection
     <td>".$row["unit_name"]."</td>
     </tr>
     <tr>
-    <th>Lecturer</th>
-    <td>".$row["unit_lecturer"]."</td>
+    <th>Campus</th>
+    <td>".$row["unit_campus"]."</td>
     </tr>
     <tr>
     <th>Semester</th>
@@ -35,7 +35,7 @@ include('db_conn.php'); //db connection
     </tr>";
         }
         echo "</table>";   
-
+        //echo "There are ".$queryResult."results!";
     }
     else{
         echo '<script language="javascript">';

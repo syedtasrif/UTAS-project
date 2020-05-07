@@ -2,9 +2,9 @@
 include 'db.inc.php';
 if(isset($_POST['login-submit'])){
     
-    $mailuid=$_POST['mailuid'];
+    $email=$_POST['email'];
     $password=$_POST['pwd'];
-    if(empty($mailuid) || empty($password)){
+    if(empty($email) || empty($password)){
         header("Location: ../login.php?error=emptyfields");
         exit();
     }
@@ -17,7 +17,7 @@ if(isset($_POST['login-submit'])){
             exit();
         }
         else{
-            mysqli_stmt_bind_param($stmt, "ss", $mailuid, $mailuid);
+            mysqli_stmt_bind_param($stmt, "ss", $email, $email);
             mysqli_stmt_execute($stmt);
             $result=mysqli_stmt_get_result($stmt);
             if($row=mysqli_fetch_assoc($result)){
@@ -30,8 +30,8 @@ if(isset($_POST['login-submit'])){
                 else if($pwdCheck==true){
                     session_start();
                     
-                    $_SESSION['userUid']=$row['user_name'];
-                    $_SESSION['userRole']=$row['user_role'];
+                    $_SESSION['loggedin_email']=$row['user_email'];
+                    $_SESSION['loggedin_id']=$row['user_id'];
 
                     header("Location: ../cms-dashboard.php?login=success");
                     exit();

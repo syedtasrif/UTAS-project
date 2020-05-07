@@ -1,6 +1,6 @@
 <?php
 session_start();
-if(!isset($_SESSION['userUid'])){
+if(!isset($_SESSION['loggedin_id'])){
     header("Location: login.php?error=anonymousUser");    
 }
 ?>
@@ -30,7 +30,7 @@ include('db_conn.php'); //db connection
 
     </head>
     <body>
-        <!-- Add Modal popup -->
+        <!-- Add UC & Lec Modal popup for Department Coordinator use-->
         <div class="modal fade" id="add_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -50,10 +50,34 @@ include('db_conn.php'); //db connection
                                 <input type="text" class="form-control" id="inputName" name="unit_name">
                                 <br/>
                                 <label>Unit Coordinator</label>
-                                <input type="text" class="form-control" id="inputUC" name="unit_coordinator">
+                                
+                                <select class="form-control" id="inputUC" name="unit_coordinator">
+                                <?php
+                                $sql= "SELECT * FROM users WHERE user_role = 'staff'";
+                                $result= mysqli_query($conn, $sql);
+                                $user_json=array();
+                                while ($row =mysqli_fetch_array($result)){
+                                    echo "<option value='".$row['user_id']."'>".$row['user_name']."</option>";
+                                    $user_json[$row['user_id']] = $row['user_name'];
+                                }
+                                    $user_json = json_encode($user_json);
+                                    ?>
+                                </select>
+                                
                                 <br/>
                                 <label>Unit Lecturer</label>
-                                <input type="text" class="form-control" id="inputLec" name="unit_lecturer">
+                                
+                                <select class="form-control" id="inputLec" name="unit_lecturer">
+                                    <option value="">Choose</option>
+                                    <?php
+                                    $sql= "SELECT * FROM users WHERE user_role = 'staff'";
+                                    $result= mysqli_query($conn, $sql);
+
+                                    while ($row =mysqli_fetch_array($result)){
+                                        echo "<option value='".$row['user_id']."'>".$row['user_name']."</option>";
+                                    }
+                                    ?>
+                                </select>
                                 <br/>
                                 <label>Semester</label>
                                 <select class="form-control" id="inputSem" name="unit_semester">
@@ -305,7 +329,7 @@ include('db_conn.php'); //db connection
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Modal for adding New student -->
         <div class="modal" tabindex="-1" role="dialog" id="add"  aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -334,92 +358,79 @@ include('db_conn.php'); //db connection
                 </div>
             </div>
         </div>
-        <!-- Modal -->
-        <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- Modal for Allocating Lecturer -->
+        <div class="modal fade" id="add_modal_lec" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3 class="modal-title" id="exampleModalLabel">Allocate Lecturer</h3>
+                        <h4 class="modal-title" id="exampleModalLabel">Add Lecture Class</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-6">
+                        <div class="form-group">
+                            <form id="add_lecture_form" method="post">
+                                <label>Unit Code</label>
+                                <select class="form-control" name="unit_code" id="lecture_unit">
+                                    <?php
+                                    $sql= "SELECT * FROM units";
+                                    $result= mysqli_query($conn, $sql);
 
-                                    <h4>Select Lecturer:</h4>
+                                    while ($row =mysqli_fetch_array($result)){
+                                        echo "<option value='".$row['unit_id']."'>".$row['unit_code'].' '.$row['unit_campus']."</option>";
+                                    }
+                                    ?>
+                                </select>
+                                <br/>
+                                <label>Unit Lecturer</label>
 
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">Lecturer</option>
-                                    </select>
+                                <select class="form-control" id="lecturer_lecturer" name="unit_lecturer">
+                                    <?php
+                                    $sql= "SELECT * FROM users WHERE user_role = 'staff'";
+                                    $result= mysqli_query($conn, $sql);
 
-                                    <h4>Campus:</h4>
-
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">Pandora</option>
-                                        <option value="2">Rivendell</option>
-                                        <option value="3">Neverland</option>
-                                    </select>
-                                    <h4>Lecture Day:</h4>
-
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">Monday</option>
-                                        <option value="2">Tuesday</option>
-                                        <option value="3">Wednesday</option>
-                                        <option value="4">Thursday</option>
-                                        <option value="5">Friday</option>
-                                    </select>
-
-
-                                </div>
-                                <div class="col-md-6">
-                                    <h4>Semester:</h4>
-
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">Semester 1</option>
-                                        <option value="2">Semester 2</option>
-                                        <option value="3">Winter School</option>
-                                        <option value="3">Spring School</option>
-                                    </select> 
-                                    <h4>Lecture Duration:</h4>
-
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">1 Hour</option>
-                                        <option value="2">2 Hour</option>
-                                    </select>
-                                    <h4>Lecture Time:</h4> 
-                                    <div class="form-group">
-                                        <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-                                            <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
-                                            <span class="input-group-addon" data-target="#datetimepicker3" data-toggle="datetimepicker">
-                                                <span class="glyphicon glyphicon-time"></span>
-                                            </span>
-                                        </div>
+                                    while ($row =mysqli_fetch_array($result)){
+                                        echo "<option value='".$row['user_id']."'>".$row['user_name']."</option>";
+                                    }
+                                    ?>
+                                </select>
+                                <br/>
+                                <label>Lecture Day</label>
+                                <select class="form-control" id="lecture_day" name="lecture_day">
+                                    <option value="">Choose</option>
+                                    <option value="Monday">Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                </select>
+                                <br/>
+                                <label>Lecture Time</label>
+                                <div class="form-group">
+                                    <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
+                                        <input type="text" id="lecture_time" name="lecture_time" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
+                                        <span class="input-group-addon" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
                                     </div>
-                                    <script type="text/javascript">
-                                        $(function () {
-                                            $('#datetimepicker3').datetimepicker({  //timepicker plugin initiate
-                                                format: 'LT'
-                                            });
-                                        });
-                                    </script>
-
-
                                 </div>
+                                <script type="text/javascript">
+                                    $(function () {
+                                        $('#datetimepicker4').datetimepicker({
+                                            format: 'LT'
+                                        });
+                                    });
+                                </script>
+                                <br/>
+                                <a type="submit" class="btn btn-success" name="add_lec_buttonInModal" id="add_lec_buttonInModal">Add</a>
+                            </form>
 
-                            </div>
-                        </div>
+                        </div>                       
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+
+                        <button type="button" class="btn btn-light" data-dismiss="modal" id="close" onclick="javascript:window.location.reload()">Close</button>
                     </div>
                 </div>
             </div>
@@ -439,7 +450,7 @@ include('db_conn.php'); //db connection
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li class="active"><a href="homepage_UWD.html">Home</a></li>
+                        <li class="active"><a href="homepage_UWD.php">Home</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>
                             <ul class="dropdown-menu">
@@ -453,7 +464,7 @@ include('db_conn.php'); //db connection
                                 <li><a href="#">Student</a></li>
                             </ul>
                         </li>
-                        <li><a href="login.html">Logout</a></li>
+                        <li><a href="includes/logout.inc.php">Logout</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
                         <li><a href="#">Welcome, Syed</a></li>
@@ -486,11 +497,11 @@ include('db_conn.php'); //db connection
                             <a href="index.html" class="list-group-item active main-color-bg">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
                             </a>
-                            <a href="enroll.html" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
-                            <a href="timetable.html" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
-                            <a href="tuteAllocate.html" class="list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
-                            <a href="tuteAllocate.html" class="active list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit Management<span class="badge">197</span></a>
-                            <a href="academicStaffList.html" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
+                            <a href="enroll.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
+                            <a href="timetable.php" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
+                            <a href="tuteAllocate.php" class="list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
+                            <a href="tuteAllocate.php" class="active list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit Management<span class="badge">197</span></a>
+                            <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
 
                         </div>
 
@@ -531,19 +542,17 @@ include('db_conn.php'); //db connection
                                             <th>Semester</th>
                                             <th>Campus</th>
                                             <th>Unit Coordinator</th>
-                                            <th>Unit Lecturer</th>
-                                            <th>Lecture Day</th>
-                                            <th>Lecture Time</th>
+
                                         </tr>
 
 
                                         <?php
-                                        $sql= "SELECT * FROM units ORDER BY unit_id DESC;";                    
+                                        $sql= "SELECT * FROM units INNER JOIN users ON units.unit_coordinator = users.user_id ORDER BY units.unit_id DESC;";                    
                                         $result= mysqli_query($conn, $sql);
 
 
                                         while($row=mysqli_fetch_assoc($result)){
-                                            echo "<tr><td>".$row["unit_id"]."</td><td>".$row["unit_code"]."</td><td>".$row["unit_name"]."</td><td>".$row["unit_semester"]."</td><td>".$row["unit_campus"]."</td><td>".$row["unit_coordinator"]."</td><td>".$row["unit_lecturer"]."</td><td>".$row["lecture_day"]."</td><td>".$row["lecture_time"]."</td></tr>";
+                                            echo "<tr><td>".$row["unit_id"]."</td><td>".$row["unit_code"]."</td><td>".$row["unit_name"]."</td><td>".$row["unit_semester"]."</td><td>".$row["unit_campus"]."</td><td>".$row["user_name"]."</td></tr>";
                                         }
                                         echo "</table>";                 
 
@@ -564,46 +573,44 @@ include('db_conn.php'); //db connection
                                 <h3 class="panel-title">Unit Management (UC Area)</h3>
                             </div>
                             <div class="panel-body">
-                                <table class="table table-striped table-hover">
-                                    <tr>
-                                        <th>Unit Code</th>
-                                        <th>Lecturer</th>
-                                        <th>Location</th>
-                                        <th>Semester</th>
-                                        <th>Lecture Time</th>
-                                        <th>Student List</th>
-                                        <th></th>
-                                    </tr>
-                                    <tr>
-                                        <td>KIT502</td>
-                                        <td>PHP Content</td>
-                                        <td>Campus:</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td><p><a class="btn btn-link" data-toggle="modal" data-target="#remove">View</a></p><a class="btn btn-success btn-sm" data-toggle="modal" data-target="#add">Add</a></td>
-                                        <td><a class="btn btn-default" data-toggle="modal" data-target="#edit">Add Lecture</a></td>
-                                    </tr>
-                                </table>
-                                <table class="table table-striped table-hover">
-                                    <tr>
-                                        <th>Unit Code</th>
-                                        <th>Tutor</th>
-                                        <th>Location</th>
-                                        <th>Semester</th>  
-                                        <th>Tutorial Time</th>
-                                        <th>Class Size</th>
-                                        <th></th>
-                                    </tr>
-                                    <tr>
-                                        <td>KIT502</td>
-                                        <td>PHP Content</td>
-                                        <td>Campus:</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td><a class="btn btn-default" data-toggle="modal" data-target="#editTute">Add Tutorial</a></td>
-                                    </tr>
-                                </table>
+                                <a class="btn btn-default" data-toggle="modal" data-target="#editTute">Add Tutorial</a>
+                                <a class="btn btn-default" data-toggle="modal" data-target="#add_modal_lec">Add/Edit Lecturer</a>
+                                <a class="btn btn-link" data-toggle="modal" data-target="#remove">View</a>
+                                <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#add">Add</a>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" border="1px" id="editable_lec_table">
+
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Unit Code</th>
+                                            <th>Unit Name</th>
+                                            <th>Semester</th>
+                                            <th>Campus</th>
+                                            <th>Unit Lecturer</th>
+                                            <th>Lecture Day</th>
+                                            <th>Lecture Time</th>
+
+                                        </tr>
+
+
+                                        <?php
+                                        $sql= "SELECT * FROM units LEFT JOIN users ON units.unit_lecturer = users.user_id ORDER BY units.unit_id DESC;";                    
+                                        $result= mysqli_query($conn, $sql);
+
+
+                                        while($row=mysqli_fetch_assoc($result)){
+                                            echo "<tr><td>".$row["unit_id"]."</td><td>".$row["unit_code"]."</td><td>".$row["unit_name"]."</td><td>".$row["unit_semester"]."</td><td>".$row["unit_campus"]."</td><td>".$row["user_name"]."</td><td>".$row["lecture_day"]."</td><td>".$row["lecture_time"]."</td></tr>";
+                                        }
+                                        echo "</table>";                 
+
+                                        ?>
+
+
+
+                                    </table>
+                                </div>
+                              
+                                
                             </div>
                         </div>
                         <!-- Lecturer Area-->
@@ -712,7 +719,7 @@ include('db_conn.php'); //db connection
                     $("#search-form").hide();
                 }
                 function event2(){
-                    $.post("tute7_view.inc.php", {user_input: $("#input").val()}, 
+                    $.post("search_results.inc.php", {user_input: $("#input").val()}, 
                            function(data){
                         $(".results-container").html(data);
 
@@ -726,11 +733,12 @@ include('db_conn.php'); //db connection
 
 
             $(document).ready(function(){
+                
                 $('#editable_table').Tabledit({
                     url:'action.inc.php',
                     columns:{
-                        identifier:[0, "id"],
-                        editable:[[1, 'unit_code'], [2, 'unit_name'], [3, 'lecturer'], [4, 'semester']]
+                        identifier:[0, "unit_id"],
+                        editable:[[1, 'unit_code'], [2, 'unit_name'], [3, 'unit_semester'], [4, 'unit_campus'], [5, 'unit_coordinator', '<?php echo $user_json; ?>']]
                     },
                     restoreButton: false,
                     onSuccess: function(data, textStatus, jqXHR){
@@ -744,27 +752,22 @@ include('db_conn.php'); //db connection
             $(document).ready(function() {
                 $("#addButton").click(function() {
                     var inputCode = $("#inputCode").val();
-                    var inputName = $("#inputName").val();
-                    var inputLec = $("#inputLec").val();
+                    var inputName = $("#inputName").val();                    
                     var inputSem = $("#inputSem").val();
                     var inputUC = $("#inputUC").val();
-                    var inputTime = $("#inputTime").val();
                     var inputCamp = $("#inputCamp").val();
-                    var inputLecDay = $("#inputLecDay").val();
                     
-                    if (inputCode == '' || inputName == '' || inputLec == '' || inputSem == '' || inputUC == '' || inputTime == '' || inputCamp == '' || inputLecDay == '') {
+                    if (inputCode == '' || inputName == '' || inputSem == '' || inputCamp == '' || inputUC == '') {
                         alert("Insertion Failed Some Fields are Blank....!!");
                     } else {
                         // Returns successful data submission message when the entered information is stored in database.
                         $.post("insert.inc.php", {
                             inputCode1: inputCode,
-                            inputName1: inputName,
-                            inputLec1: inputLec,
+                            inputName1: inputName,                            
                             inputSem1: inputSem,
-                            inputUC1: inputUC,
-                            inputTime1: inputTime,
-                            inputCamp1: inputCamp,
-                            inputLecDay1: inputLecDay
+                            inputUC1: inputUC,                            
+                            inputCamp1: inputCamp
+                            
                         }, function(data) {
                             alert(data);
                             $('#add-form')[0].reset(); // To reset form fields
@@ -772,7 +775,47 @@ include('db_conn.php'); //db connection
                     }
                 });
             });
+            $(document).ready(function() {
+                $("#add_lec_buttonInModal").click(function() {
+                    var inputCode = $("#lecture_unit").val();
+                    var inputLec = $("#lecturer_lecturer").val();
+                    var inputTime = $("#lecture_time").val();
+                    var inputLecDay = $("#lecture_day").val();
 
+                    if (inputCode == '' || inputLec == '' || inputTime == '' || inputLecDay == '') {
+                        alert("Add Lecture: Insertion Failed Some Fields are Blank....!!");
+                    } else {
+                        // Returns successful data submission message when the entered information is stored in database.
+                        $.post("insertLecture.inc.php", {
+                            inputCode1: inputCode,                            
+                            inputLec1: inputLec,                            
+                            inputTime1: inputTime,                            
+                            inputLecDay1: inputLecDay
+                        }, function(data) {
+                            alert(data);
+                            $('#add_lecture_form')[0].reset(); // To reset form fields
+                        });
+                    }
+                });
+            });
+            
+            $(document).ready(function(){
+
+                $('#editable_lec_table').Tabledit({
+                    url:'action_edit_lec.inc.php',
+                    columns:{
+                        identifier:[0, "unit_id"],
+                        editable:[[5, 'unit_lecturer', '<?php echo $user_json; ?>'], [6, 'lecture_day'], [7, 'lecture_time']]
+                    },
+                    restoreButton: false,
+                    onSuccess: function(data, textStatus, jqXHR){
+                        if(data.action=='delete'){
+                            //$('#'+data.id).remove();
+                            
+                        }                       
+                    }
+                }); 
+            });
 
         </script>
     </body>

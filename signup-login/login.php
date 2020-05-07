@@ -9,8 +9,8 @@
                 <img src="Images/avatar.png" class="avatar">
                 <h1>Login Here</h1>
                 <form action="includes/login.inc.php" method="POST">
-                    <p>Username</p>
-                    <input type="text" name="mailuid" placeholder="Enter Email Address/Username..">
+                    <p>Email</p>
+                    <input type="text" name="email" placeholder="Enter Email Address..">
                     <p>Password</p>
                     <input type="password" name="pwd" placeholder="Password">
                     <input type="submit" name="login-submit" value="Login">

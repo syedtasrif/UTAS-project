@@ -15,17 +15,17 @@ if(isset($_POST['signup-submit'])){
         exit();
 
     }
-    if(!filter_var($email, FILTER_VALIDATE_EMAIL) && !preg_match("/^[a-zA-Z0-9]*$/", $username)){
-        header("Location: ../register.php?error=invalidmail&uid");
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+        header("Location: ../register.php?error=invalidmail");
         exit();
 
     }
 
     else if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-        header("Location: ../register.php?error=invalidmail&uid=".$username);
+        header("Location: ../register.php?error=invalidmail&uid=".$email);
         exit();
     }
-    else if(!preg_match("/^[a-zA-Z0-9]*$/", $username)){
+    else if(!preg_match("/^[a-z A-Z]*$/", $username)){
         header("Location: ../register.php?error=invaliduid&mail=".$email);
         exit();
     }

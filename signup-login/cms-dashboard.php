@@ -1,6 +1,6 @@
 <?php
  session_start();
-if(!isset($_SESSION['userUid'])){
+if(!isset($_SESSION['loggedin_id'])){
     header("Location: login.php?error=anonymousUser");    
 }
 ?>
@@ -33,7 +33,7 @@ if(!isset($_SESSION['userUid'])){
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li class="active"><a href="homepage_UWD.html">Home</a></li>
+                        <li class="active"><a href="homepage_UWD.php">Home</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>
                             <ul class="dropdown-menu">
@@ -47,7 +47,7 @@ if(!isset($_SESSION['userUid'])){
                                 <li><a href="#">Student</a></li>
                           </ul>
                         </li>
-                        <li><a href="login.html">Logout</a></li>
+                        <li><a href="login.php">Logout</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
                         <li><a href="#">Welcome, Syed</a></li>
@@ -80,11 +80,11 @@ if(!isset($_SESSION['userUid'])){
                             <a href="index.html" class="list-group-item active main-color-bg">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
                             </a>
-                            <a href="enroll.html" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
-                            <a href="timetable.html" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
-                            <a href="tuteAllocate.html" class="list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
+                            <a href="enroll.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
+                            <a href="timetable.php" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
+                            <a href="tuteAllocate.php" class="list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
                             <a href="unitManage.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit Management<span class="badge">197</span></a>
-                            <a href="academicStaffList.html" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
+                            <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
                         </div>
                         
                <!--Just for visualization-->
