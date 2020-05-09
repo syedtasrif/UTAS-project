@@ -21,7 +21,7 @@ user_email='".$user_email."'
 WHERE user_id= ".$input['user_id'];
 }
 if($input["action"]==='delete'){
-$query="DELETE FROM units WHERE id=".$input["user_id"];
+$query="DELETE FROM users WHERE user_id=".$input["user_id"];
 
 }
 mysqli_query($conn, $query);

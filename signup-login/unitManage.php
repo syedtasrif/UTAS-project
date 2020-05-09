@@ -30,7 +30,8 @@ include('db_conn.php'); //db connection
 
     </head>
     <body>
-        <!-- Add UC & Lec Modal popup for Department Coordinator use-->
+<!-------------------------------------------- Add UC & Lec Modal popup for Department Coordinator use--------------------------------------------------->
+        
         <div class="modal fade" id="add_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -136,7 +137,8 @@ include('db_conn.php'); //db connection
             </div>
         </div>
 
-        <!-- Search Modal popup -->
+<!----------------------------------------------------------------- Search Modal for DC ----------------------------------------------------------------->
+        
         <div class="modal fade" id="search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -166,7 +168,9 @@ include('db_conn.php'); //db connection
                 </div>
             </div>
         </div>
-        <!-- Modalfor Tutors -->
+        
+<!--------------------------------------------------------Modal for Student List View for Tutors -------------------------------------------------------->
+        
         <div class="modal" tabindex="-1" role="dialog" id="view"  aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -198,106 +202,93 @@ include('db_conn.php'); //db connection
             </div>
         </div>
 
-        <!-- Modal for creating tutorial class-->
+<!---------------------------------------------------------- Modal for creating tutorial class----------------------------------------------------------->
+        
         <div class="modal fade" id="editTute" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3 class="modal-title" id="exampleModalLabel">Allocate Lecturer</h3>
+                        <h3 class="modal-title" id="exampleModalLabel">Allocate Tutor</h3>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-6">
+                        <div class="form-group">
+                            <form id="add_tute_form" method="post">
+                                <label>Tutorial Unit</label>
+                                <select class="form-control" id="tutorial_unit" name="tutorial_unit">
+                                    <option value="">Choose</option>
+                                    <?php
+                                    $sql= "SELECT * FROM units";
+                                    $result= mysqli_query($conn, $sql);
 
-                                    <h4>Select Tutor:</h4>
+                                    while ($row =mysqli_fetch_array($result)){
+                                        echo "<option value='".$row['unit_id']."'>".$row['unit_code'].' '.$row['unit_campus'].' '.$row['unit_semester']."</option>";
+                                    }
+                                    ?>
+                                </select>
+                                <br/>
+                                <label>Tutorial Name</label>
+                                <input type="text" class="form-control" id="tutorial_name" name="tutorial_name">
+                                <br/>
+                                <label>Unit Tutor</label>
+                                <select class="form-control" id="tutorial_tutor" name="tutorial_tutor">
+                                    <option value="">Choose</option>
+                                    <?php
+                                    $sql= "SELECT * FROM users WHERE user_role = 'staff'";
+                                    $result= mysqli_query($conn, $sql);
 
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">Tutor</option>
-                                    </select>
-
-                                    <h4>Campus:</h4>
-
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">Pandora</option>
-                                        <option value="2">Rivendell</option>
-                                        <option value="3">Neverland</option>
-                                    </select>
-                                    <h4>Tutorial Day:</h4>
-
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">Monday</option>
-                                        <option value="2">Tuesday</option>
-                                        <option value="3">Wednesday</option>
-                                        <option value="4">Thursday</option>
-                                        <option value="5">Friday</option>
-                                    </select>
-                                    <h4>Class Size:</h4>
-
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">10</option>
-                                        <option value="2">20</option>
-                                    </select>
-
-
-                                </div>
-
-                                <div class="col-md-6">
-                                    <h4>Semester:</h4>
-
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">Semester 1</option>
-                                        <option value="2">Semester 2</option>
-                                        <option value="3">Winter School</option>
-                                        <option value="3">Spring School</option>
-                                    </select> 
-                                    <h4>Tutorial Duration:</h4>
-
-                                    <select class="custom-select" required>
-                                        <option value="">Choose</option>
-                                        <option value="1">1 Hour</option>
-                                        <option value="2">2 Hour</option>
-                                    </select>
-                                    <h4>Tutorial Time:</h4> 
-                                    <div class="form-group">
-                                        <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-                                            <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
-                                            <span class="input-group-addon" data-target="#datetimepicker3" data-toggle="datetimepicker">
-                                                <span class="glyphicon glyphicon-time"></span>
-                                            </span>
-                                        </div>
+                                    while ($row =mysqli_fetch_array($result)){
+                                        echo "<option value='".$row['user_id']."'>".$row['user_name']."</option>";
+                                    }
+                                    ?>
+                                </select> 
+                                <br/>
+                                <label>Tutorial Class Size</label>
+                                <input type="text" class="form-control" id="tutorial_size" name="tutorial_size">
+                                <br/>
+                                <label>Tutorial Day</label>
+                                <select class="form-control" id="tutorial_day" name="tutorial_day">
+                                    <option value="">Choose</option>
+                                    <option value="Monday">Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                </select>
+                                <br/>
+                                <label>Tutorial Time</label>
+                                <div class="form-group">
+                                    <div class="input-group date" id="timepicker" data-target-input="nearest">
+                                        <input type="text" id="tutorial_time" name="tutorial_time" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
+                                        <span class="input-group-addon" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
                                     </div>
-                                    <script type="text/javascript">
-                                        $(function () {
-                                            $('#datetimepicker3').datetimepicker({
-                                                format: 'LT'
-                                            });
-                                        });
-                                    </script>
-
-
                                 </div>
+                                <script type="text/javascript">
+                                    $(function () {
+                                        $('#timepicker').datetimepicker({
+                                            format: 'LT'
+                                        });
+                                    });
+                                </script>
+                                <br/>
+                                <a type="submit" class="btn btn-success" name="add_tutor" id="add_tutor">Add Tutor</a>
+                            </form>
 
-                            </div>
-                        </div>
+                        </div>                       
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal" id="close" onclick="javascript:window.location.reload()">Close</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modal for Adding and Removing Student-->
+<!-------------------------------------------------- Modal for Adding and Removing Student--------------------------------------------------------------->
+        
         <div class="modal" tabindex="-1" role="dialog" id="remove"  aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -358,7 +349,9 @@ include('db_conn.php'); //db connection
                 </div>
             </div>
         </div>
-        <!-- Modal for Allocating Lecturer -->
+        
+<!--------------------------------------------------------- Modal for Allocating Lecturer---------------------------------------------------------------->
+        
         <div class="modal fade" id="add_modal_lec" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -436,7 +429,8 @@ include('db_conn.php'); //db connection
             </div>
         </div>
 
-        <!--Navigation-->
+<!-------------------------------------------------------------------Navigation-------------------------------------------------------------------------->
+        
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -487,8 +481,9 @@ include('db_conn.php'); //db connection
                 </div>
             </div>
         </div>
-        <!-->
-<!--Dashboard-->
+        
+<!---------------------------------------------------------------Dashboard------------------------------------------------------------------------------->
+        
         <section id="main">
             <div class="container">
                 <div class="row">
@@ -520,9 +515,13 @@ include('db_conn.php'); //db connection
                             </div>
                         </div>
                     </div>
-                    <!---Content--->
+                    
+<!-------------------------------------------------------------------Content----------------------------------------------------------------------------->
+                   
                     <div class="col-md-9">
-                        <!--Department Coordinator Area-->
+                        
+<!----------------------------------------------------------Department Coordinator Area------------------------------------------------------------------>
+                        
                         <div class="panel panel-default">
                             <div class="panel-heading main-color-bg">
                                 <h3 class="panel-title">Units (DC Area)</h3>
@@ -567,13 +566,16 @@ include('db_conn.php'); //db connection
 
                             </div>
                         </div>
-                        <!-- Unit Coordinator Area-->
+                        
+                        
+<!------------------------------------------------------------------ Unit Coordinator Area--------------------------------------------------------------->
+                        
                         <div class="panel panel-default">
                             <div class="panel-heading main-color-bg">
                                 <h3 class="panel-title">Unit Management (UC Area)</h3>
                             </div>
                             <div class="panel-body">
-                                <a class="btn btn-default" data-toggle="modal" data-target="#editTute">Add Tutorial</a>
+                                
                                 <a class="btn btn-default" data-toggle="modal" data-target="#add_modal_lec">Add/Edit Lecturer</a>
                                 <a class="btn btn-link" data-toggle="modal" data-target="#remove">View</a>
                                 <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#add">Add</a>
@@ -613,94 +615,82 @@ include('db_conn.php'); //db connection
                                 
                             </div>
                         </div>
-                        <!-- Lecturer Area-->
+                        
+                        
+<!----------------------------------------------------------------- Lecturer Area------------------------------------------------------------------------>
+                        
+                        
                         <div class="panel panel-default">
                             <div class="panel-heading main-color-bg">
                                 <h3 class="panel-title">Unit Management (Lecturer)</h3>
                             </div>
                             <div class="panel-body">
-                                <table class="table table-striped table-hover">
-                                    <tr>
-                                        <th>Activity</th>
-                                        <th>Unit Code</th>
-                                        <th>Location</th>
-                                        <th>Semester</th>
-                                        <th>Day</th>  
-                                        <th>Time</th>
-                                        <th>Duratioin</th>
-                                        <th>Student List</th>
+                                <div class="table-responsive">
+                                    <a type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#editTute">Add Tutorial</a>
+                                    <table class="table table-striped table-hover" border="1px" id="editable_tute_table">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Tutorial Name</th>
+                                            <th>Tutorial Tutor</th>
+                                            <th>Tutorial Unit</th>
+                                            <th>Tutorial Size</th>
+                                            <th>Tutorial Day</th>
+                                            <th>Tutorial Time</th>
+                                        </tr>
 
-                                    </tr>
-                                    <tr>
-                                        <td>Lec-01</td>
-                                        <td>KIT502</td>
-                                        <td>Campus:</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td><p><a class="btn btn-link" data-toggle="modal" data-target="#remove">View</a></p><a class="btn btn-success btn-sm" data-toggle="modal" data-target="#add">Add</a></td>
-                                    </tr>
-                                </table>
-                                <table class="table table-striped table-hover">
-                                    <tr>
-                                        <th>Activity</th>
-                                        <th>Unit Code</th>
-                                        <th>Tutor</th>
-                                        <th>Location</th>
-                                        <th>Semester</th>
-                                        <th>Day</th>
-                                        <th>Time</th>
-                                        <th>Duration</th>
-                                        <th>Class Size</th>
-                                        <th></th>
-                                    </tr>
-                                    <tr>
-                                        <td>Tut-01</td>
-                                        <td>KIT502</td>
-                                        <td>PHP Content</td>
-                                        <td>Campus:</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td><a class="btn btn-default" data-toggle="modal" data-target="#editTute">Add Tutorial</a></td>
-                                    </tr>
-                                </table>
+
+                                        <?php
+                                        $sql= "SELECT * FROM tutorials 
+                                                LEFT JOIN units ON tutorials.tutorial_unit = units.unit_id 
+                                                LEFT JOIN users ON tutorials.tutorial_tutor = users.user_id 
+                                                ORDER BY tutorials.tutorial_id DESC;";                    
+                                        $result= mysqli_query($conn, $sql);
+                                        while($row=mysqli_fetch_assoc($result)){
+                                            echo "<tr><td>".$row["tutorial_id"]."</td><td>".$row["tutorial_name"]."</td><td>".$row["user_name"]."</td><td>".$row["unit_code"]."</td><td>".$row["tutorial_size"]."</td><td>".$row["tutorial_day"]."</td><td>".$row["tutorial_time"]."</td></tr>";
+                                        }
+                                        echo "</table>";                 
+
+                                        ?>
+
+
+
+                                    </table>
+                                </div>                           
+
                             </div>
                         </div>
-                        <!-- Tutor Area-->
+                        
+<!-------------------------------------------------------------------- Tutor Area ----------------------------------------------------------------------->
 
                         <div class="panel panel-default">
                             <div class="panel-heading main-color-bg">
                                 <h3 class="panel-title">Unit Management (Tutor)</h3>
                             </div>
                             <div class="panel-body">
-                                <table class="table table-striped table-hover">
+                                <td><a class="btn btn-link" data-toggle="modal" data-target="#view">View</a></td>
+                                <table class="table table-striped table-hover" border="1px" id="tute_table">
                                     <tr>
-                                        <th>Activity</th>
-                                        <th>Unit Code</th>
-                                        <th>Location</th>
-                                        <th>Semester</th>
-                                        <th>Day</th>  
-                                        <th>Time</th>
-                                        <th>Duratioin</th>
-                                        <th>Student List</th>
+                                        <th>ID</th>
+                                        <th>Tutorial Name</th>
+                                        <th>Tutorial Tutor</th>
+                                        <th>Tutorial Unit</th>
+                                        <th>Tutorial Size</th>
+                                        <th>Tutorial Day</th>
+                                        <th>Tutorial Time</th>
+                                    </tr>
+                                    <?php
+                                    $sql= "SELECT * FROM tutorials 
+                                                LEFT JOIN units ON tutorials.tutorial_unit = units.unit_id 
+                                                LEFT JOIN users ON tutorials.tutorial_tutor = users.user_id 
+                                                ORDER BY tutorials.tutorial_id DESC;";                    
+                                    $result= mysqli_query($conn, $sql);
+                                    while($row=mysqli_fetch_assoc($result)){
+                                        echo "<tr><td>".$row["tutorial_id"]."</td><td>".$row["tutorial_name"]."</td><td>".$row["user_name"]."</td><td>".$row["unit_code"]."</td><td>".$row["tutorial_size"]."</td><td>".$row["tutorial_day"]."</td><td>".$row["tutorial_time"]."</td></tr>";
+                                    }
+                                    echo "</table>";            
 
-                                    </tr>
-                                    <tr>
-                                        <td>Tut-01</td>
-                                        <td>KIT502</td>
-                                        <td>Campus:</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td>PHP Content</td>
-                                        <td><a class="btn btn-link" data-toggle="modal" data-target="#view">View</a></td>
-                                    </tr>
+                                    ?>
                                 </table>
-
                             </div>
                         </div>
 
@@ -816,6 +806,53 @@ include('db_conn.php'); //db connection
                     }
                 }); 
             });
+            
+            $(document).ready(function() {
+                $("#add_tutor").click(function() {
+                    var tutorial_name = $("#tutorial_name").val();
+                    var tutorial_unit = $("#tutorial_unit").val();
+                    var tutorial_tutor = $("#tutorial_tutor").val();
+                    var tutorial_size = $("#tutorial_size").val();
+                    var tutorial_day = $("#tutorial_day").val();
+                    var tutorial_time = $("#tutorial_time").val();
+
+                    if (tutorial_name == '' || tutorial_unit == '' || tutorial_tutor == '' || tutorial_size == '' || tutorial_day == '' || tutorial_time == '') {
+                        alert("Add Lecture: Insertion Failed Some Fields are Blank....!!");
+                    } else {
+                        // Returns successful data submission message when the entered information is stored in database.
+                        $.post("insertTutor.inc.php", {
+                            tutorial_name1: tutorial_name,                            
+                            tutorial_unit1: tutorial_unit,                            
+                            tutorial_tutor1: tutorial_tutor,                            
+                            tutorial_size1: tutorial_size,
+                            tutorial_day1: tutorial_day,
+                            tutorial_time1: tutorial_time
+                        }, function(data) {
+                            alert(data);
+                            $('#add_tute_form')[0].reset(); // To reset form fields
+                        });
+                    }
+                });
+            });
+            
+            $(document).ready(function(){
+
+                $('#editable_tute_table').Tabledit({
+                    url:'action_edit_tute.inc.php',
+                    columns:{
+                        identifier:[0, "tutorial_id"],
+                        editable:[[1, 'tutorial_name'], [2, 'tutorial_tutor', '<?php echo $user_json; ?>'], [4, 'tutorial_size'], [5, 'tutorial_day'], [6, 'tutorial_time']]
+                    },
+                    restoreButton: false,
+                    onSuccess: function(data, textStatus, jqXHR){
+                        if(data.action=='delete'){
+                            //$('#'+data.id).remove();
+
+                        }                       
+                    }
+                }); 
+            });
+
 
         </script>
     </body>
