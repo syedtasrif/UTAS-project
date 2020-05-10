@@ -156,7 +156,7 @@ include('db_conn.php'); //db connection
                             <a href="timetable.php" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
                             <a href="tuteAllocate.php" class="list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
                             <a href="unitManage.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit Management<span class="badge">197</span></a>
-                            <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
+                            <a href="academicStaffList.php" class="active list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
                         </div>
 
                         <!--Just for visualization-->
@@ -188,17 +188,17 @@ include('db_conn.php'); //db connection
                                         <th>Staff Name</th>
                                         <th>Staff Qualification</th>
                                         <th>Staff Expertise</th>
-                                        <th>Staff Role</th>
+                                        <th>Staff Role Allocation</th>
                                         <th>Staff Unavailability</th>
                                         <th>Staff Email</th>
                                     </tr>
                                     <?php
-                                    $sql= "SELECT * FROM users WHERE user_role != 'student'";                    
+                                    $sql= "SELECT user_id, user_name, user_qualification, user_expertise, user_role_allocated,  user_unavailability, user_email FROM users WHERE user_role != 'student'";                    
                                     $result= mysqli_query ($conn, $sql);
 
 
                                     while($row=mysqli_fetch_assoc($result)){
-                                        echo "<tr><td>".$row["user_id"]."</td><td>".$row["user_name"]."</td><td>".$row["user_qualification"]."</td><td>".$row["user_expertise"]."</td><td>".$row["user_role"]."</td><td>".$row["user_unavailability"]."</td><td>".$row["user_email"]."</td></tr>";
+                                        echo "<tr><td>".$row["user_id"]."</td><td>".$row["user_name"]."</td><td>".$row["user_qualification"]."</td><td>".$row["user_expertise"]."</td><td>".$row["user_role_allocated"]."</td><td>".$row["user_unavailability"]."</td><td>".$row["user_email"]."</td></tr>";
                                     }
                                     echo "</table>";                 
 
@@ -218,7 +218,7 @@ include('db_conn.php'); //db connection
                     url:'academicStaffList_action.inc.php',
                     columns:{
                         identifier:[0, "user_id"],
-                        editable:[[1, 'user_name'], [2, 'user_qualification'], [3, 'user_expertise'], [4, 'user_role'], [5, 'user_unavailability'], [6, 'user_email']]
+                        editable:[[1, 'user_name'], [2, 'user_qualification'], [3, 'user_expertise'], [4, 'user_role_allocated', '{"Null": " ", "Unit Coordinator": "Unit Coordinator", "Lecturer": "Lecturer", "Tutor": "Tutor"}'], [5, 'user_unavailability'], [6, 'user_email']]
                     },
                     restoreButton: false,
                     onSuccess: function(data, textStatus, jqXHR){
