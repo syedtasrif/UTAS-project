@@ -26,8 +26,7 @@ include('db_conn.php'); //db connection
         <script src="jquery.tabledit.js" type="text/javascript"></script>
     </head>
     <body>
-
-        <!--------------------------------------------------------------Navigation Bar------------------------------------------------------------------->
+        <!--Navigation-->
 
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
@@ -42,7 +41,7 @@ include('db_conn.php'); //db connection
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="homepage_UWD.php">Home</a></li>
+                        <li class="active"><a href="homepage_UWD.html">Home</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>
                             <ul class="dropdown-menu">
@@ -61,12 +60,12 @@ include('db_conn.php'); //db connection
                     <ul class="nav navbar-nav navbar-left">
                         <li><a href="#">Welcome, Syed</a></li>
                     </ul>
-
                 </div>
-
             </div>
         </div>
+
         <!--Footer-->
+
         <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-text pull-left">
@@ -79,8 +78,9 @@ include('db_conn.php'); //db connection
                 </div>
             </div>
         </div>
-        <!-->
-<!--Dashboard-->
+
+        <!--Dashboard-->
+
         <section id="main">
             <div class="container">
                 <div class="row">
@@ -89,14 +89,12 @@ include('db_conn.php'); //db connection
                             <a href="index.html" class="list-group-item active main-color-bg">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
                             </a>
-                            <a href="enroll.php" class="active list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
+                            <a href="enroll.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
                             <a href="timetable.php" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
-                            <a href="tuteAllocate.php" class="list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
+                            <a href="tuteAllocate.php" class="active list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
                             <a href="unitManage.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit Management<span class="badge">197</span></a>
                             <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
                         </div>
-
-                        <!--Just for visualization-->
                         <div class="well">
                             <h4>Disk Space Used</h4>
                             <div class="progress">
@@ -113,138 +111,122 @@ include('db_conn.php'); //db connection
                         </div>
                     </div>
                     <!---Content--->
+
                     <div class="col-md-9">
                         <div class="panel panel-default">
                             <div class="panel-heading main-color-bg">
-                                <h3 class="panel-title">Units Enrolled</h3>
+                                <h3 class="panel-title">Tutorials Available</h3>
                             </div>
                             <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table table-striped table-hover">
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Tutorial Unit Code</th>                                                
+                                                <th>Tutorial Semester</th>
+                                                <th>Tutorial Campus</th>  
+                                                <th>Unit Tutor</th>
+                                                <th>Tutorial Day</th>
+                                                <th>Tutorial Time</th>
+                                                <th>Action</th>                    
+                                            </tr>
+                                            <?php
+                                            $all_unit_sql= "SELECT * FROM tutorials 
+                                INNER JOIN student_unit ON student_unit.student_unit_id = tutorials.tutorial_unit 
+                                INNER JOIN units ON units.unit_id = tutorials.tutorial_unit 
+                                INNER JOIN users ON users.user_id = tutorials.tutorial_tutor
+                                WHERE student_unit.student_id = ". $_SESSION['loggedin_id'] ." 
+                                AND student_unit.student_tutorial_id != tutorials.tutorial_id 
+                                ORDER BY tutorials.tutorial_id DESC;";                    
+                                            $result= mysqli_query($conn, $all_unit_sql);
+                                            echo mysqli_error($conn);
+                                            while($row=mysqli_fetch_assoc($result)){
 
-                                <table class="table table-striped table-hover">
-                                    <tr>
-                                        <th>Unit Code</th>
-                                        <th>Name</th>
-                                        <th>Semester</th>
-                                        <th>Campus</th>  
-                                        <th>Unit Lecturer</th>
-                                        <th>Lecturer Day</th>
-                                        <th>Lecturer Time</th>
-                                        <th>Action</th>
-                                        
-                                    </tr>
-                                    <?php
-                                    $all_unit_sql= "SELECT * FROM units 
-                                INNER JOIN users ON units.unit_lecturer = users.user_id 
-                                INNER JOIN student_unit ON units.unit_id = student_unit.student_unit_id 
-                                ORDER BY units.unit_id DESC;";                    
-                                    $result= mysqli_query($conn, $all_unit_sql);
-                                    $student_enrolled_units = array();
-                                    while($row=mysqli_fetch_assoc($result)){
-                                        $student_enrolled_units[] = $row['unit_id'];
-                                        echo "<tr>
+                                                echo "<tr>
+                              <td>".$row["tutorial_name"]."</td>
                               <td>".$row["unit_code"]."</td>
-                              <td>".$row["unit_name"]."</td>
                               <td>".$row["unit_semester"]."</td>
                               <td>".$row["unit_campus"]."</td>
                               <td>".$row["user_name"]."</td>
-                              <td>".$row["lecture_day"]."</td>
-                              <td>".$row["lecture_time"]."</td>
-                              <td><button class='btn btn-danger withdraw-btn' id='withdraw_btn".$row['unit_id']."' data-unitid=".$row['unit_id'].">Withdraw</button></td>
+                              <td>".$row["tutorial_day"]."</td>
+                              <td>".$row["tutorial_time"]."</td>
+                              <td><a href='student_tutorial_enroll.inc.php?tutorial_id=".$row['tutorial_id']."&unit_id=".$row['unit_id']."' class='btn btn-success tute-enroll-btn' >Enroll</button></td>
                               </tr>";
-                                    }
-                                    echo "</table>";                 
+                                            }
+                                            echo "</table>";            
 
-                                    ?>
-
-
-                                </table>
+                                            ?>
+                                        </table>
+                                    </div>
+                                </div>
+                                <br>
                             </div>
                         </div>
+                    </div>
 
-
+                    <div class="col-md-9">
                         <div class="panel panel-default">
                             <div class="panel-heading main-color-bg">
-                                <h3 class="panel-title">Units Available</h3>
+                                <h3 class="panel-title">Enrolled Tutorials</h3>
                             </div>
                             <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table table-striped table-hover">
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Tutorial Unit Code</th>                                                
+                                                <th>Tutorial Semester</th>
+                                                <th>Tutorial Campus</th>  
+                                                <th>Unit Tutor</th>
+                                                <th>Tutorial Day</th>
+                                                <th>Tutorial Time</th>
+                                                <th>Action</th>                    
+                                            </tr>
+                                            <?php
+                                            $all_unit_sql= "SELECT * FROM tutorials 
+                                INNER JOIN student_unit ON student_unit.student_unit_id = tutorials.tutorial_unit AND student_tutorial_id = tutorials.tutorial_id
+                                INNER JOIN units ON units.unit_id = tutorials.tutorial_unit 
+                                INNER JOIN users ON users.user_id = tutorials.tutorial_tutor
+                                WHERE student_unit.student_id = ". $_SESSION['loggedin_id'] ." 
+                                AND student_unit.student_tutorial_id != 0 
+                                ORDER BY tutorials.tutorial_id DESC;";                    
+                                            $result= mysqli_query($conn, $all_unit_sql);
+                                            echo mysqli_error($conn);
+                                            while($row=mysqli_fetch_assoc($result)){
 
-                                <table class="table table-striped table-hover">
-                                    <tr>
-                                        <th>Unit Code</th>
-                                        <th>Name</th>
-                                        <th>Semester</th>
-                                        <th>Campus</th>  
-                                        <th>Unit Lecturer</th>
-                                        <th>Lecturer Day</th>
-                                        <th>Lecturer Time</th>
-                                        <th>Action</th>
-                                        <th></th>
-                                    </tr>
-                                    <?php
-                                    $all_unit_sql= "SELECT * FROM units 
-                                INNER JOIN users ON units.unit_lecturer = users.user_id
-                                ORDER BY units.unit_id DESC;";                    
-                                    $result= mysqli_query($conn, $all_unit_sql);
-                                    while($row=mysqli_fetch_assoc($result)){
-                                        if(in_array($row['unit_id'], $student_enrolled_units)) {
-                                            continue;
-                                        }
-                                        echo "<tr>
+                                                echo "<tr>
+                              <td>".$row["tutorial_name"]."</td>
                               <td>".$row["unit_code"]."</td>
-                              <td>".$row["unit_name"]."</td>
                               <td>".$row["unit_semester"]."</td>
                               <td>".$row["unit_campus"]."</td>
                               <td>".$row["user_name"]."</td>
-                              <td>".$row["lecture_day"]."</td>
-                              <td>".$row["lecture_time"]."</td>
-                              <td><button class='btn btn-success enroll-btn' id='enroll_btn".$row['unit_id']."' data-unitid=".$row['unit_id'].">Enroll</button></td>
+                              <td>".$row["tutorial_day"]."</td>
+                              <td>".$row["tutorial_time"]."</td>
+                              <td>
+                                <a href='student_tutorial_withdraw.inc.php?tutorial_id=".$row['tutorial_id']."&unit_id=".$row['unit_id']."' 
+                                    class='btn btn-danger tute-enroll-btn' >Withdraw</button></td>
                               </tr>";
-                                    }
-                                    echo "</table>";               
+                                            }
+                                            echo "</table>";            
 
-                                    ?>
-                                </table>
+                                            ?>
+                                        </table>
+                                    </div>
+                                </div>
+                                <br>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
         </section>
+
         <script>
 
-
-            $(document).ready(function(){       //event when the enroll button is clicked by the user
-                $('.enroll-btn').click(function() {
-                    var unit_id = $(this).data('unitid');
-                    $.post("student_enroll.inc.php", {
-                        student_id: "<?php echo $_SESSION['loggedin_id']; ?>",                     
-                        unit_id: unit_id,                          
-
-                    }, function(data) {         //output confirmation message
-                        alert(data);
-                        $('#enroll_btn'+unit_id).prop('disabled', true); //TO DISABLED
-                    }); 
-                });
-            });
-
-            $(document).ready(function(){           //event when the withdrawn button is clicked by the user
-                $('.withdraw-btn').click(function() {
-                    var unit_id = $(this).data('unitid');
-                    $.post("student_withdraw.inc.php", {
-                        student_id: "<?php echo $_SESSION['loggedin_id']; ?>",                            
-                        unit_id: unit_id,                            
-
-                    }, function(data) {             //output confirmation message
-                        alert(data);
-                        $('#withdraw_btn'+unit_id).prop('disabled', true); //TO DISABLED
-                    }); 
-                });
-            });
-
-
         </script>
+
     </body>
 </html>
 

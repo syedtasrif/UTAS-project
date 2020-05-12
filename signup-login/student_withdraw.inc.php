@@ -1,7 +1,7 @@
 <?php
 include ('db_conn.php'); //db connection
-
-$student_id1 = $_POST['student_id']; // Fetching Values from URL
+session_start();
+$student_id1 = $_SESSION['loggedin_id']; // Fetching Values from URL
 $unit_id1 = $_POST['unit_id'];
 
 
