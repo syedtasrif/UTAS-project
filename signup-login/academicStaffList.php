@@ -3,6 +3,10 @@ session_start();
 if(!isset($_SESSION['loggedin_id'])){
     header("Location: login.php?error=anonymousUser");    
 }
+
+if($_SESSION['user_role_allocated'] != 'admin') {
+    header("Location: cms-dashboard.php?msg=accessdenied");    
+}
 ?>
 <?php
 include('db_conn.php'); //db connection
@@ -52,9 +56,6 @@ include('db_conn.php'); //db connection
                                 <select name="user_role" id="user_role" class="form-control" required>
                                     <option value="">Select</option>
                                     <option value="staff">Staff</option>
-                                    <option value="UC">UC</option>
-                                    <option value="lecturer">Lecturer</option>
-                                    <option value="tutor">Tutor</option>
                                 </select>
                                 <br/>
                                 <label for="Position"><b>Highest Academic Qualification</b></label>
@@ -77,6 +78,64 @@ include('db_conn.php'); //db connection
                                 <input type="password" placeholder="Repeat Password" name="pwd-repeat" id="pwd-repeat" class="form-control" required>
                                 <br/>
                                 <button type="submit" class="btn btn-success" id="addStaffButton" name="addStaffButton">Insert</button>
+
+
+                            </form>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close" onclick="javascript:window.location.reload()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="modal fade" id="insertNewStaffrole" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="exampleModalLabel">Role Allocation</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <?php
+                            $staffsql = "SELECT * FROM users WHERE  user_role != 'student' AND  user_role != 'admin'";
+                            $staffresult = mysqli_query($conn, $staffsql);
+                            ?>
+                            <form id="add-form-role" method="POST">
+                                <label for="Role"><b>Name</b></label>
+                                <select name="user_name_role" id="user_name_role" class="form-control" required>
+                                    <option value="">Select</option>
+                                    <?php
+                                    while($row = mysqli_fetch_assoc($staffresult)) {
+                                    ?>
+                                    <option value="<?php echo $row['user_id'];?>"><?php echo $row['user_name'];?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                                <br/>
+                                <label for="Role"><b>UC Role</b></label>
+                                <select name="user_role_role" id="user_role_role" class="form-control" required>
+                                    <option value="">Select</option>
+                                    <option value="Unit Coordinator">UC</option>
+                                </select>
+                                <br/>
+                                <label for="Role"><b>Others Role</b></label>
+                                <select name="user_role_allocated" id="user_role_allocated" class="form-control" required>
+                                    <option value="">Select</option>
+                                    <option value="Lecturer">Lecturer</option>
+                                    <option value="Tutor">Tutor</option>
+                                </select>
+                                <br/>
+                                <button type="submit" class="btn btn-success" id="addStaffButtonrole" name="addStaffButtonrole">Insert Role</button>
 
 
                             </form>
@@ -149,14 +208,24 @@ include('db_conn.php'); //db connection
                 <div class="row">
                     <div class="col-md-3">
                         <div class="list-group">
-                            <a href="index.html" class="list-group-item active main-color-bg">
+                            <a href="cms-dashboard.php" class="list-group-item main-color-bg">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
                             </a>
+
+                            <?php if($_SESSION['user_role_allocated'] == 'student') {?>
                             <a href="enroll.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
                             <a href="timetable.php" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
                             <a href="tuteAllocate.php" class="list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
+                            <?php } ?>
+
+                            <?php if($_SESSION['user_role_allocated'] != 'student') {?>
                             <a href="unitManage.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit Management<span class="badge">197</span></a>
+                            <?php } ?>
+
+                            <?php if($_SESSION['user_role_allocated'] == 'admin') {?>
                             <a href="academicStaffList.php" class="active list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
+                            <a href="unitMaster.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit List (Master))<span class="badge">1</span></a>
+                            <?php } ?>
                         </div>
 
                         <!--Just for visualization-->
@@ -188,17 +257,16 @@ include('db_conn.php'); //db connection
                                         <th>Staff Name</th>
                                         <th>Staff Qualification</th>
                                         <th>Staff Expertise</th>
-                                        <th>Staff Role Allocation</th>
                                         <th>Staff Unavailability</th>
                                         <th>Staff Email</th>
                                     </tr>
                                     <?php
-                                    $sql= "SELECT user_id, user_name, user_qualification, user_expertise, user_role_allocated,  user_unavailability, user_email FROM users WHERE user_role != 'student'";                    
+                                    $sql= "SELECT * FROM users WHERE user_role != 'student'";                    
                                     $result= mysqli_query ($conn, $sql);
 
 
                                     while($row=mysqli_fetch_assoc($result)){
-                                        echo "<tr><td>".$row["user_id"]."</td><td>".$row["user_name"]."</td><td>".$row["user_qualification"]."</td><td>".$row["user_expertise"]."</td><td>".$row["user_role_allocated"]."</td><td>".$row["user_unavailability"]."</td><td>".$row["user_email"]."</td></tr>";
+                                        echo "<tr><td>".$row["user_id"]."</td><td>".$row["user_name"]."</td><td>".$row["user_qualification"]."</td><td>".$row["user_expertise"]."</td><td>".$row["user_unavailability"]."</td><td>".$row["user_email"]."</td></tr>";
                                     }
                                     echo "</table>";                 
 
@@ -208,17 +276,52 @@ include('db_conn.php'); //db connection
 
                         </div>
                         <a type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertNewStaff">Add New Staff</a>
-                    </div>
+                        
+ <!------------------------------------------------ role allocation------------------------------------------------------------------------------------->
+                        
+                        <div class="panel-heading main-color-bg">
+                            <h3 class="panel-title">Staff Role Allocation</h3>                           
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover" border="1px" id="editable_table_role">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Staff Name</th>
+                                        <th>Staff Email</th>
+                                        <th>UC Role</th>
+                                        <th>Other Role</th>
+
+                                    </tr>
+                                    <?php
+                                    $sql= "SELECT * FROM users WHERE user_role != 'student' AND  user_role != 'admin'";                    
+                                    $result= mysqli_query ($conn, $sql);
+
+
+                                    while($row=mysqli_fetch_assoc($result)){
+                                        echo "<tr><td>".$row["user_id"]."</td><td>".$row["user_name"]."</td><td>".$row["user_email"]."</td><td>".$row["user_role"]."</td><td>".$row["user_role_allocated"]."</td></tr>";
+                                    }
+                                    echo "</table>";                 
+
+                                    ?>
+                                </table>
+                            </div>
+
+                        </div>
+                        <a type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertNewStaffrole">Assign New Role</a>
+                    </div>                  
+
                 </div>
             </div>
         </section>
+        
         <script>
             $(document).ready(function(){
                 $('#editable_table').Tabledit({
                     url:'academicStaffList_action.inc.php',
                     columns:{
                         identifier:[0, "user_id"],
-                        editable:[[1, 'user_name'], [2, 'user_qualification'], [3, 'user_expertise'], [4, 'user_role_allocated', '{"Null": " ", "Unit Coordinator": "Unit Coordinator", "Lecturer": "Lecturer", "Tutor": "Tutor"}'], [5, 'user_unavailability'], [6, 'user_email']]
+                        editable:[[1, 'user_name'], [2, 'user_qualification'], [3, 'user_expertise'], [4, 'user_unavailability'], [5, 'user_email']]
                     },
                     restoreButton: false,
                     onSuccess: function(data, textStatus, jqXHR){
@@ -250,6 +353,27 @@ include('db_conn.php'); //db connection
                             user_expertise1: user_expertise,
                             user_role1: user_role,
                             user_qualification1: user_qualification                           
+                        }, function(data) {
+                            alert(data);
+                            $('#add-form')[0].reset(); // To reset form fields
+                        });
+                    }
+                });
+
+
+                $("#addStaffButtonrole").click(function() {
+                    var user_name = $("#user_name_role").val();
+                    var user_role = $("#user_role_role").val();
+                    var user_role_allocated = $("#user_role_allocated").val();
+
+                    if (user_name == '' || (user_role == '' && user_role_allocated == '')) {
+                        alert("Insertion Failed Some Fields are Blank....!!");
+                    } else {
+                        // Returns successful data submission message when the entered information is stored in database.
+                        $.post("insertNewStaffRole.inc.php", {                                           
+                            user_name1: user_name,
+                            user_role1: user_role,
+                            user_role_allocated: user_role_allocated                           
                         }, function(data) {
                             alert(data);
                             $('#add-form')[0].reset(); // To reset form fields

@@ -77,14 +77,24 @@ if(!isset($_SESSION['loggedin_id'])){
                 <div class="row">
                     <div class="col-md-3">
                         <div class="list-group">
-                            <a href="index.html" class="list-group-item active main-color-bg">
+                            <a href="cms-dashboard.php" class="list-group-item active main-color-bg">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
                             </a>
+
+                            <?php if($_SESSION['user_role_allocated'] == 'student') {?>
                             <a href="enroll.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
                             <a href="timetable.php" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
                             <a href="tuteAllocate.php" class="list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
+                            <?php } ?>
+
+                            <?php if($_SESSION['user_role_allocated'] != 'student') {?>
                             <a href="unitManage.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit Management<span class="badge">197</span></a>
+                            <?php } ?>
+
+                            <?php if($_SESSION['user_role_allocated'] == 'admin') {?>
                             <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
+                            <a href="unitMaster.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit List (Master))<span class="badge">1</span></a>
+                            <?php } ?>
                         </div>
                         
                <!--Just for visualization-->

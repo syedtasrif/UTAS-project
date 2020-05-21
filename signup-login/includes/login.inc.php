@@ -21,7 +21,6 @@ if(isset($_POST['login-submit'])){
             mysqli_stmt_execute($stmt);
             $result=mysqli_stmt_get_result($stmt);
             if($row=mysqli_fetch_assoc($result)){
-                //printf("[004] [%d] %s\n", mysqli_stmt_errno($stmt), mysqli_stmt_error($stmt));die;
                 $pwdCheck= password_verify($password, $row['user_pwd']);
                 if($pwdCheck==false){
                     header("Location: ../login.php?error=wrongpwd");
@@ -32,6 +31,10 @@ if(isset($_POST['login-submit'])){
                     
                     $_SESSION['loggedin_email']=$row['user_email'];
                     $_SESSION['loggedin_id']=$row['user_id'];
+                    $_SESSION['user_role_allocated']=$row['user_role_allocated'];
+                    $_SESSION['user_role']=$row['user_role'];
+
+
 
                     header("Location: ../cms-dashboard.php?login=success");
                     exit();

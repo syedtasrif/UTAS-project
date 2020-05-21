@@ -86,14 +86,24 @@ include('db_conn.php'); //db connection
                 <div class="row">
                     <div class="col-md-3">
                         <div class="list-group">
-                            <a href="index.html" class="list-group-item active main-color-bg">
+                            <a href="cms-dashboard.php" class="list-group-item main-color-bg">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
                             </a>
+
+                            <?php if($_SESSION['user_role_allocated'] == 'student') {?>
                             <a href="enroll.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
                             <a href="timetable.php" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
                             <a href="tuteAllocate.php" class="active list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
+                            <?php } ?>
+
+                            <?php if($_SESSION['user_role_allocated'] != 'student') {?>
                             <a href="unitManage.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit Management<span class="badge">197</span></a>
+                            <?php } ?>
+
+                            <?php if($_SESSION['user_role_allocated'] == 'admin') {?>
                             <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
+                            <a href="unitMaster.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit List (Master))<span class="badge">1</span></a>
+                            <?php } ?>
                         </div>
                         <div class="well">
                             <h4>Disk Space Used</h4>
@@ -142,6 +152,7 @@ include('db_conn.php'); //db connection
                                             $result= mysqli_query($conn, $all_unit_sql);
                                             echo mysqli_error($conn);
                                             while($row=mysqli_fetch_assoc($result)){
+                                                
 
                                                 echo "<tr>
                               <td>".$row["tutorial_name"]."</td>
@@ -151,7 +162,14 @@ include('db_conn.php'); //db connection
                               <td>".$row["user_name"]."</td>
                               <td>".$row["tutorial_day"]."</td>
                               <td>".$row["tutorial_time"]."</td>
-                              <td><a href='student_tutorial_enroll.inc.php?tutorial_id=".$row['tutorial_id']."&unit_id=".$row['unit_id']."' class='btn btn-success tute-enroll-btn' >Enroll</button></td>
+                              if(".$row['tutorial_enrolled']."<".$row['tutorial_size']."){
+                              <td><a href='student_tutorial_enroll.inc.php?tutorial_id=".$row['tutorial_id']."&unit_id=".$row['unit_id']."' class='btn btn-success tute-enroll-btn' >Enroll</button></td>                              
+                              }
+                              else{
+                                <td><a type="button" disabled>Class Full</a></td>
+                              
+                              }
+
                               </tr>";
                                             }
                                             echo "</table>";            
