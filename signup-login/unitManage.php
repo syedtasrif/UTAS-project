@@ -187,18 +187,52 @@ include('db_conn.php'); //db connection
                         </button>
                     </div>
                     <div class="modal-body">
-                        <table class="table table-striped table-hover">
-                            <tr>
-                                <th>Student ID</th>
-                                <th>Name</th>
+                        <?php if($_SESSION['user_role_allocated'] == "Tutor") {?>
+                        <div class="panel panel-default">
+                            <?php
+                        $sql= "SELECT student_id student_unit_id student_tutorial_id FROM student_unit 
+                                                FULL OUTER JOIN units ON student_unit.student_unit_id = units.unit_id 
+                                                FULL OUTER JOIN tutorials ON student_unit.student_tutorial_id = tutorials.tutorial_id
+                                                INNER JOIN users ON student_unit.student_id = users.user_id
+                                                WHERE users.user_id = ".$_SESSION['loggedin_id'].";";                    
+                        $result= mysqli_query($conn, $sql);                               
+                        if(mysqli_num_rows($result) != 0){
 
-                            </tr>
-                            <tr>
-                                <td>PHP Content</td>
-                                <td>PHP Content</td>
+                            ?>
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" border="1px" id="editable_student_table">
 
-                            </tr>
-                        </table>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Student Name</th>
+                                            <th>Unit</th>
+                                            <th>Tutorial</th>
+                                        </tr>
+
+                                        <?php
+                                        while($row=mysqli_fetch_assoc($result)){
+                                            echo "<tr><td>".$row["auto_id"]."</td><td>".$row["user_name"]."</td><td>".$row["unit_code"]."</td><td>".$row["tuorial_name"]."</td></tr>";
+                                        }
+                                        echo "</table>";                 
+
+                                        ?>
+                                    </table>
+                                </div>
+                            </div>
+                            <?php
+                            } // end !empty if
+                            else {
+                            ?>
+                            <div class="panel-body">
+                                <p>No student enrolled</p>
+                            </div>
+                            <?php
+                            }
+                            ?>
+                        </div>
+
+                        <?php } ?>
                     </div>
                     <div class="modal-footer">
 

@@ -92,28 +92,20 @@
     
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
-                <a href="#" class="thumbnail">
-                <img src="Images/details.jpg" alt="Theme 1"></a>
-                <h3>Unit Details</h3>
-                <p></p>
-                <a href="unitdetails.html" class="btn btn-info">Enter</a>
-                <p></p>
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <a href="#" class="thumbnail">
                 <img src="Images/enrol.jpg" alt="Theme 2"></a>
                 <h3>Unit Enrollment</h3>
                 <p></p>
-                <a href="login.html" class="btn btn-info">Enter</a>
+                <a href="login.php" class="btn btn-info">Enter</a>
                 <p></p>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <a href="#" class="thumbnail">
                 <img src="Images/Time.jpg" alt="Theme 3"></a>
                 <h3>Timetable</h3>
                 <p></p>
-                <a class="btn btn-info" href="unitLectureTime.html" role="button">Enter</a>
+                <a class="btn btn-info" href="unitLectureTime.php">Enter</a>
             </div>
         </div>
     </div>

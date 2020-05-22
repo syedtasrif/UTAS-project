@@ -14,12 +14,9 @@ $std_tut = "SELECT * FROM student_unit A
             WHERE A.student_id = " . $_SESSION['loggedin_id'];
 
 $result= mysqli_query($conn, $std_tut);
-//echo mysqli_error($conn);
-//echo "<PRE>";
 $calender_arr = array();
 while($row=mysqli_fetch_assoc($result)){
-    //    var_dump($row);
-    //    var_dump($dateofdays[$row['tutorial_day']]);
+
     foreach($dateofdays[$row['tutorial_day']] as $days) {
         $calender_arr[] = array(
             'title' => $row['tutorial_name'] . ' ' . $row['unit_name'],
@@ -86,7 +83,7 @@ $calender_arr = json_encode($calender_arr);
                       <li><a href="#">Student</a></li>
                   </ul>
               </li>
-              <li><a href="login.html">Logout</a></li>
+              <li><a href="includes/logout.inc.php">Logout</a></li>
               </ul>
           <ul class="nav navbar-nav navbar-left">
             <li><a href="#">Welcome, Syed</a></li>

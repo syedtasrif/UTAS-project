@@ -162,15 +162,7 @@ include('db_conn.php'); //db connection
                               <td>".$row["user_name"]."</td>
                               <td>".$row["tutorial_day"]."</td>
                               <td>".$row["tutorial_time"]."</td>
-                              if(".$row['tutorial_enrolled']."<".$row['tutorial_size']."){
-                              <td><a href='student_tutorial_enroll.inc.php?tutorial_id=".$row['tutorial_id']."&unit_id=".$row['unit_id']."' class='btn btn-success tute-enroll-btn' >Enroll</button></td>                              
-                              }
-                              else{
-                                <td><a type="button" disabled>Class Full</a></td>
-                              
-                              }
-
-                              </tr>";
+                              <td><a href='student_tutorial_enroll.inc.php?tutorial_id=".$row['tutorial_id']."&unit_id=".$row['unit_id']."' class='btn btn-success tute-enroll-btn' >Enroll</button></td></tr>";
                                             }
                                             echo "</table>";            
 

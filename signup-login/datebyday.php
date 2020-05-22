@@ -9,15 +9,11 @@ $weekday['Sunday'] = date( 'Y-m-d', strtotime( 'sunday' ) );
 
 $dateofdays = array();
 foreach($weekday as $key => $value) {
-    $dateofdays[$key][0] = $value; //date("Y-m-d", strtotime($value . "+7 days"));
+    $dateofdays[$key][0] = $value; 
 
-    for($i=1; $i<=107;$i++) {
+    for($i=1; $i<=12;$i++) {
         $dateofdays[$key][$i] = date("Y-m-d", strtotime($value . "+7 days"));
         $value = $dateofdays[$key][$i];
     }
 
 }
-//echo "<PRE>";
-//var_dump($dateofdays);
-//die;
-?>
