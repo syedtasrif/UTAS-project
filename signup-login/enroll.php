@@ -4,7 +4,7 @@ if(!isset($_SESSION['loggedin_id'])){
     header("Location: login.php?error=anonymousUser");    
 }
 
-if($_SESSION['user_role_allocated'] != 'student') {
+if($_SESSION['user_role'] != 'student') {
     header("Location: cms-dashboard.php?msg=accessdenied");    
 }
 ?>
@@ -31,7 +31,7 @@ include('db_conn.php'); //db connection
     </head>
     <body>
 
-        <!--------------------------------------------------------------Navigation Bar------------------------------------------------------------------->
+<!--------------------------------------------------------------Navigation Bar------------------------------------------------------------------->
 
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
@@ -83,8 +83,8 @@ include('db_conn.php'); //db connection
                 </div>
             </div>
         </div>
-        <!-->
-<!--Dashboard-->
+        
+<!--------------------------------------------------------------------Dashboard---------------------------------------------------------------------->
         <section id="main">
             <div class="container">
                 <div class="row">
@@ -148,8 +148,9 @@ include('db_conn.php'); //db connection
                                     </tr>
                                     <?php
                                     $all_unit_sql= "SELECT * FROM units 
-                                INNER JOIN users ON units.unit_lecturer = users.user_id 
-                                INNER JOIN student_unit ON units.unit_id = student_unit.student_unit_id 
+                                LEFT JOIN users ON units.unit_lecturer = users.user_id 
+                                INNER JOIN student_unit ON units.unit_id = student_unit.student_unit_id
+                                WHERE student_unit.student_id = ". $_SESSION['loggedin_id'] ." 
                                 ORDER BY units.unit_id DESC;";                    
                                     $result= mysqli_query($conn, $all_unit_sql);
                                     $student_enrolled_units = array();
@@ -196,8 +197,9 @@ include('db_conn.php'); //db connection
                                     </tr>
                                     <?php
                                     $all_unit_sql= "SELECT * FROM units 
-                                INNER JOIN users ON units.unit_lecturer = users.user_id
-                                ORDER BY units.unit_id DESC;";                    
+                                LEFT JOIN student_unit ON student_unit.student_unit_id = units.unit_id 
+                                LEFT JOIN users ON users.user_id = units.unit_lecturer                                
+                                ORDER BY units.unit_id DESC;";                     
                                     $result= mysqli_query($conn, $all_unit_sql);
                                     while($row=mysqli_fetch_assoc($result)){
                                         if(in_array($row['unit_id'], $student_enrolled_units)) {

@@ -147,7 +147,8 @@ include('db_conn.php'); //db connection
                                 INNER JOIN units ON units.unit_id = tutorials.tutorial_unit 
                                 INNER JOIN users ON users.user_id = tutorials.tutorial_tutor
                                 WHERE student_unit.student_id = ". $_SESSION['loggedin_id'] ." 
-                                AND student_unit.student_tutorial_id != tutorials.tutorial_id 
+                                AND student_unit.student_tutorial_id != tutorials.tutorial_id
+                                AND tutorials.tutorial_size != tutorials.tutorial_enrolled
                                 ORDER BY tutorials.tutorial_id DESC;";                    
                                             $result= mysqli_query($conn, $all_unit_sql);
                                             echo mysqli_error($conn);

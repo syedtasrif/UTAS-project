@@ -4,6 +4,7 @@ session_start();
 $student_id1 = $_SESSION['loggedin_id']; // Fetching Values from URL
 $unit_id1 = $_POST['unit_id'];
 
+// decrease tutorial size before deleting student unit.
 
 $query="DELETE FROM student_unit WHERE student_unit_id=$unit_id1 AND student_id=$student_id1"; //Delete query
 

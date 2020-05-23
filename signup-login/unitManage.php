@@ -190,12 +190,13 @@ include('db_conn.php'); //db connection
                         <?php if($_SESSION['user_role_allocated'] == "Tutor") {?>
                         <div class="panel panel-default">
                             <?php
-                        $sql= "SELECT student_id student_unit_id student_tutorial_id FROM student_unit 
-                                                FULL OUTER JOIN units ON student_unit.student_unit_id = units.unit_id 
-                                                FULL OUTER JOIN tutorials ON student_unit.student_tutorial_id = tutorials.tutorial_id
-                                                INNER JOIN users ON student_unit.student_id = users.user_id
-                                                WHERE users.user_id = ".$_SESSION['loggedin_id'].";";                    
+                                $sql= "SELECT users.user_name, units.unit_name, tutorials.tutorial_name, users.user_email FROM student_unit 
+                                        LEFT JOIN users ON users.user_id = student_unit.student_id 
+                                        LEFT JOIN units ON units.unit_id = student_unit.student_unit_id 
+                                        LEFT JOIn tutorials ON tutorials.tutorial_id = student_unit.student_tutorial_id
+                                        WHERE tutorials.tutorial_tutor = ".$_SESSION['loggedin_id'].";";                    
                         $result= mysqli_query($conn, $sql);                               
+    echo mysqli_error($conn);
                         if(mysqli_num_rows($result) != 0){
 
                             ?>
@@ -204,15 +205,15 @@ include('db_conn.php'); //db connection
                                     <table class="table table-striped table-hover" border="1px" id="editable_student_table">
 
                                         <tr>
-                                            <th>ID</th>
                                             <th>Student Name</th>
+                                            <th>Student Email</th>
                                             <th>Unit</th>
                                             <th>Tutorial</th>
                                         </tr>
 
                                         <?php
                                         while($row=mysqli_fetch_assoc($result)){
-                                            echo "<tr><td>".$row["auto_id"]."</td><td>".$row["user_name"]."</td><td>".$row["unit_code"]."</td><td>".$row["tuorial_name"]."</td></tr>";
+                                            echo "<tr><td>".$row["user_name"]."</td><td>".$row["user_email"]."</td><td>".$row["unit_name"]."</td><td>".$row["tutorial_name"]."</td></tr>";
                                         }
                                         echo "</table>";                 
 
@@ -335,7 +336,7 @@ include('db_conn.php'); //db connection
             </div>
         </div>
 
-<!-------------------------------------------------- Modal for Adding and Removing Student--------------------------------------------------------------->
+<!-------------------------------------------------- Modal for Adding and Removing Student-------------------------------------------------------------->
         
         <div class="modal" tabindex="-1" role="dialog" id="remove"  aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -368,25 +369,52 @@ include('db_conn.php'); //db connection
             </div>
         </div>
 
-        <!-- Modal for adding New student -->
+<!----------------------------------------------------------- Modal for adding New student ------------------------------------------------------------->
+        
         <div class="modal" tabindex="-1" role="dialog" id="add"  aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add Student to Lecture</h5>
+                        <h5 class="modal-title">Add Student to Unit</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form >
-                            <p>Student Name</p>
-                            <input type="text" name="" placeholder="Name">
-                            <p></p>
-                            <p>Student ID</p>
-                            <input type="text" name="" placeholder="ID">
-                            <p></p>
-                            <input type="submit" name="" value="Add">
+                        <form id="add_student_form" method="post">
+                            <label>Unit</label>
+                            <select class="form-control" id="select_unit" name="select_unit">
+                                <option value="">Choose</option>
+                                <?php
+                                $sql= "SELECT * FROM units 
+                                INNER JOIN users ON units.unit_coordinator=users.user_id
+                                WHERE users.user_id=". $_SESSION['loggedin_id'] ." ORDER BY units.unit_id DESC;";
+                                $result= mysqli_query($conn, $sql);
+                                
+                                while ($row =mysqli_fetch_array($result)){
+                                    echo "<option value='".$row['unit_id']."'>".$row['unit_name']." ".$row['unit_semester']." ".$row['unit_campus']."</option>";
+                                    
+                                }
+                                
+                                ?>
+                            </select>
+                            <br/>
+                            <label>Student</label>
+                            <select class="form-control" id="select_student" name="select_student">
+                                <option value="">Choose</option>
+                                <?php
+                                $sql= "SELECT * FROM users WHERE users.user_role_allocated LIKE '%student%';";
+                                $result= mysqli_query($conn, $sql);
+
+                                while ($row =mysqli_fetch_array($result)){
+                                    echo "<option value='".$row['user_id']."'>".$row['user_name']." ".$row['user_email']."</option>";
+
+                                }
+
+                                ?>
+                            </select>
+                            <br/>
+                            <a type="submit" class="btn btn-success" name="add_student_buttonInModal" id="add_student_buttonInModal">Add</a>
 
                         </form>
                     </div>
@@ -998,6 +1026,26 @@ include('db_conn.php'); //db connection
                         }                       
                     }
                 }); 
+            });
+            
+            $(document).ready(function() {
+                $("#add_student_buttonInModal").click(function() {
+                    var unitId = $("#select_unit").val();
+                    var userId = $("#select_student").val();
+
+                    if (unitId == '' || userId == '') {
+                        alert("Add Student: Insertion Failed Some Fields are Blank....!!");
+                    } else {
+                        // Returns successful data submission message when the entered information is stored in database.
+                        $.post("insertStudent.inc.php", {
+                            unitId1: unitId,                            
+                            userId1: userId
+                        }, function(data) {
+                            alert(data);
+                            $('#add_student_form')[0].reset(); // To reset form fields
+                        });
+                    }
+                });
             });
 
 
