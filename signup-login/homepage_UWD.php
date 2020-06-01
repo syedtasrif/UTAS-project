@@ -29,7 +29,7 @@
     
 <body>
     
-<!--Navigation-->
+<!----------------------------------------------------------------------Navigation-------------------------------------------------------------------->
     
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container-fluid">
@@ -45,24 +45,13 @@
       <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
               <li class="active"><a href="homepage_UWD.php">Home</a></li>
-              <li><a href="#">About</a></li>
-              <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login<b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                      <li class="dropdown-header">Admin and Dashboard</li>
-                      <li><a href="login.php">Staff</a></li>                      
-                      <li class="divider"></li>
-                      <li class="dropdown-header">Student CWS</li>
-                      <li><a href="login.php">Student</a></li>
-                  </ul>
-              </li>
-              <li><a href="#">Contact</a></li>
+              <li><a href="login.php">Login</a></li>
           </ul>
       </div>
     </div>
 </div>
     
-    <!--Footer-->
+<!------------------------------------------------------------------------Footer------------------------------------------------------------------------>
     
     <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
     <div class="container-fluid">
@@ -77,7 +66,8 @@
     </div>
     </div>
     
-    <!--Jumbotron-->
+<!-------------------------------------------------------------------------Jumbotron-------------------------------------------------------------------->
+    
     <div class="container-fluid">
         <div class="jumbotron text-center">
             <h1>Welcome</h1>
@@ -88,7 +78,7 @@
         </div>
     </div>
     
- <!--Thumbnail used in bootstrap 3.4.1 container--> 
+ <!-----------------------------------------------------------Thumbnail used in bootstrap 3.4.1 container---------------------------------------------> 
     
     <div class="container-fluid">
         <div class="row">

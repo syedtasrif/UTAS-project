@@ -31,7 +31,7 @@ include('db_conn.php'); //db connection
     </head>
     <body>
 
-<!--------------------------------------------------------------Navigation Bar------------------------------------------------------------------->
+<!--------------------------------------------------------------Navigation Bar------------------------------------------------------------------------->
 
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
@@ -47,30 +47,24 @@ include('db_conn.php'); //db connection
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="homepage_UWD.php">Home</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-header">Admin and Dashboard</li>
-                                <li><a href="#">Course Coordinator</a></li>
-                                <li><a href="#">Unit Coordinator</a></li>
-                                <li><a href="#">Lecturer</a></li>
-                                <li><a href="#">Tutor</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-header">Student CWS</li>
-                                <li><a href="#">Student</a></li>
-                            </ul>
-                        </li>
                         <li><a href="includes/logout.inc.php">Logout</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
-                        <li><a href="#">Welcome, Syed</a></li>
+                        <li><a href="#">Welcome, <?php
+                            $sql= "SELECT * FROM users WHERE user_id= ".$_SESSION['loggedin_id'].";";
+                            $result= mysqli_query($conn, $sql);
+                            while($row=mysqli_fetch_assoc($result)){
+                                echo $row["user_name"];
+                            }
+                            ?>
+                            </a></li>
                     </ul>
 
                 </div>
 
             </div>
         </div>
-        <!--Footer-->
+<!----------------------------------------------------------------------Footer-------------------------------------------------------------------------->
         <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-text pull-left">
@@ -108,9 +102,12 @@ include('db_conn.php'); //db connection
                             <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
                             <a href="unitMaster.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit List (Master))<span class="badge">1</span></a>
                             <?php } ?>
+                            
+                            <a href="userProfile.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>User Profile<span class="badge">3</span></a>
                         </div>
 
-                        <!--Just for visualization-->
+<!-----------------------------------------------------------------Just for visualization--------------------------------------------------------------->
+                        
                         <div class="well">
                             <h4>Disk Space Used</h4>
                             <div class="progress">
@@ -126,7 +123,7 @@ include('db_conn.php'); //db connection
                             </div>
                         </div>
                     </div>
-                    <!---Content--->
+<!--------------------------------------------------------------------Content------------------------------------------------------------------------>
                     <div class="col-md-9">
                         <div class="panel panel-default">
                             <div class="panel-heading main-color-bg">
@@ -146,7 +143,7 @@ include('db_conn.php'); //db connection
                                         <th>Action</th>
                                         
                                     </tr>
-                                    <?php
+                                    <?php //joining table queries based student session id
                                     $all_unit_sql= "SELECT * FROM units 
                                 LEFT JOIN users ON units.unit_lecturer = users.user_id 
                                 INNER JOIN student_unit ON units.unit_id = student_unit.student_unit_id
@@ -155,7 +152,7 @@ include('db_conn.php'); //db connection
                                     $result= mysqli_query($conn, $all_unit_sql);
                                     $student_enrolled_units = array();
                                     while($row=mysqli_fetch_assoc($result)){
-                                        $student_enrolled_units[] = $row['unit_id'];
+                                        $student_enrolled_units[] = $row['unit_id']; //row id collection
                                         echo "<tr>
                               <td>".$row["unit_code"]."</td>
                               <td>".$row["unit_name"]."</td>
@@ -167,7 +164,7 @@ include('db_conn.php'); //db connection
                               <td><button class='btn btn-danger withdraw-btn' id='withdraw_btn".$row['unit_id']."' data-unitid=".$row['unit_id'].">Withdraw</button></td>
                               </tr>";
                                     }
-                                    echo "</table>";                 
+                                    echo "</table>";     //php echoed table            
 
                                     ?>
 
@@ -232,7 +229,7 @@ include('db_conn.php'); //db connection
 
 
             $(document).ready(function(){       //event when the enroll button is clicked by the user
-                $('.enroll-btn').click(function() {
+                $('.enroll-btn').click(function() { //javascript for button clicked functionalilty
                     var unit_id = $(this).data('unitid');
                     $.post("student_enroll.inc.php", {
                         student_id: "<?php echo $_SESSION['loggedin_id']; ?>",                     
@@ -240,7 +237,7 @@ include('db_conn.php'); //db connection
 
                     }, function(data) {         //output confirmation message
                         alert(data);
-                        $('#enroll_btn'+unit_id).prop('disabled', true); //TO DISABLED
+                        $('#enroll_btn'+unit_id).prop('disabled', true); //TO DISABLED the enroll button after clicked
                     }); 
                 });
             });
@@ -248,7 +245,7 @@ include('db_conn.php'); //db connection
             $(document).ready(function(){           //event when the withdrawn button is clicked by the user
                 $('.withdraw-btn').click(function() {
                     var unit_id = $(this).data('unitid');
-                    $.post("student_withdraw.inc.php", {
+                    $.post("student_withdraw.inc.php", { //post method to pass variable
                         student_id: "<?php echo $_SESSION['loggedin_id']; ?>",                            
                         unit_id: unit_id,                            
 

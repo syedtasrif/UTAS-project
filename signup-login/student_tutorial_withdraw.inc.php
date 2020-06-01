@@ -8,7 +8,7 @@ $unit_id = $_GET['unit_id'];
 $query="UPDATE student_unit SET student_tutorial_id = " . 0 . " WHERE student_id = ". $student_id1 ." AND student_unit_id = ". $unit_id .";";
 
 if(mysqli_query($conn, $query)){
-    $query_2 = "UPDATE tutorials SET tutorial_enrolled = tutorial_enrolled - 1 WHERE tutorial_id = " . $tutorial_id;
+    $query_2 = "UPDATE tutorials SET tutorial_enrolled = tutorial_enrolled - 1 WHERE tutorial_id = " . $tutorial_id; //when withdrawn from a tutorial the tutorial seat will be increased by one so that other students can enroll in the tute section
     if(mysqli_query($conn, $query_2)) {
         mysqli_close($conn); // Connection Closed.
         header("Location: tuteAllocate.php?msg=success");

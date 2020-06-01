@@ -1,10 +1,10 @@
 <?php
 session_start();
 if(!isset($_SESSION['loggedin_id'])){
-    header("Location: login.php?error=anonymousUser");    
+    header("Location: login.php?error=anonymousUser");    // check if user didn't type the url to enter this page
 }
 
-if($_SESSION['user_role_allocated'] == 'student') {
+if($_SESSION['user_role_allocated'] == 'student') { //student can't enter this page
     header("Location: cms-dashboard.php?msg=accessdenied");    
 }
 ?>
@@ -34,7 +34,7 @@ include('db_conn.php'); //db connection
 
     </head>
     <body>
-<!-------------------------------------------- Add UC & Lec Modal popup for Department Coordinator use--------------------------------------------------->
+<!-------------------------------------------- Add Unit Modal popup for DC- created for future use-------------------------------------------------->
         
         <div class="modal fade" id="add_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -80,9 +80,9 @@ include('db_conn.php'); //db connection
                                     $user1_json=array();
                                     while ($row =mysqli_fetch_array($result)){
                                         echo "<option value='".$row['user_id']."'>".$row['user_name']."</option>";
-                                        $user1_json[$row['user_id']] = $row['user_name'];
+                                        $user1_json[$row['user_id']] = $row['user_name']; //to array the user name based on sql query
                                     }
-                                    $user1_json = json_encode($user1_json);
+                                    $user1_json = json_encode($user1_json);//passing parameter to json function
                                     ?>
                                 </select>
                                 <br/>
@@ -169,6 +169,7 @@ include('db_conn.php'); //db connection
                         </div>                       
                     </div>
                     <div class="modal-footer">
+                                    <!-- page reload once pressed the close button                       -->
                         <button type="button" class="btn btn-light" data-dismiss="modal" id="close" onclick="javascript:window.location.reload()">Close</button>
                     </div>
                 </div>
@@ -187,17 +188,18 @@ include('db_conn.php'); //db connection
                         </button>
                     </div>
                     <div class="modal-body">
-                        <?php if($_SESSION['user_role_allocated'] == "Tutor") {?>
+                        <?php //if the user role is a tutor allocated by DC
+                        if($_SESSION['user_role_allocated'] == "Tutor") {?> 
                         <div class="panel panel-default">
-                            <?php
+                            <?php //tutors can view the list of the students enrolled in their tutorials
                                 $sql= "SELECT users.user_name, units.unit_name, tutorials.tutorial_name, users.user_email FROM student_unit 
                                         LEFT JOIN users ON users.user_id = student_unit.student_id 
                                         LEFT JOIN units ON units.unit_id = student_unit.student_unit_id 
                                         LEFT JOIn tutorials ON tutorials.tutorial_id = student_unit.student_tutorial_id
                                         WHERE tutorials.tutorial_tutor = ".$_SESSION['loggedin_id'].";";                    
                         $result= mysqli_query($conn, $sql);                               
-    echo mysqli_error($conn);
-                        if(mysqli_num_rows($result) != 0){
+                        echo mysqli_error($conn);
+                        if(mysqli_num_rows($result) != 0){ //if there is a result- it will display it
 
                             ?>
                             <div class="panel-body">
@@ -212,7 +214,7 @@ include('db_conn.php'); //db connection
                                         </tr>
 
                                         <?php
-                                        while($row=mysqli_fetch_assoc($result)){
+                                        while($row=mysqli_fetch_assoc($result)){ 
                                             echo "<tr><td>".$row["user_name"]."</td><td>".$row["user_email"]."</td><td>".$row["unit_name"]."</td><td>".$row["tutorial_name"]."</td></tr>";
                                         }
                                         echo "</table>";                 
@@ -223,7 +225,7 @@ include('db_conn.php'); //db connection
                             </div>
                             <?php
                             } // end !empty if
-                            else {
+                            else { //to show that they dont have any students in their section
                             ?>
                             <div class="panel-body">
                                 <p>No student enrolled</p>
@@ -243,7 +245,7 @@ include('db_conn.php'); //db connection
             </div>
         </div>
 
-<!---------------------------------------------------------- Modal for creating tutorial class----------------------------------------------------------->
+<!---------------------------------------------------------- Modal for creating tutorial class---------------------------------------------------------->
         
         <div class="modal fade" id="editTute" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -261,13 +263,17 @@ include('db_conn.php'); //db connection
                                 <select class="form-control" id="tutorial_unit" name="tutorial_unit">
                                     <option value="">Choose</option>
                                     <?php
-                                    $sql= "SELECT units.*, D.user_name lecturer_name 
+                                    if($_SESSION['user_role_allocated'] == 'admin') {
+                                        $sql = "SELECT * FROM units";// creating tutorials for any units available for DC
+                                    } else { //UC and Lecturer can only create tutorial for their respective units
+                                        $sql= "SELECT units.*, D.user_name lecturer_name 
                                                     FROM units INNER JOIN users C ON units.unit_coordinator = C.user_id
                                                     INNER JOIN users D ON units.unit_lecturer = D.user_id
 
                                                     WHERE C.user_id = ".$_SESSION['loggedin_id']." OR
                                                           D.user_id = ".$_SESSION['loggedin_id']."
                                                     ORDER BY units.unit_id DESC;";
+                                    }
                                     $result= mysqli_query($conn, $sql);
 
                                     while ($row =mysqli_fetch_array($result)){
@@ -288,9 +294,9 @@ include('db_conn.php'); //db connection
                                     $user2_json=array();
                                     while ($row =mysqli_fetch_array($result)){
                                         echo "<option value='".$row['user_id']."'>".$row['user_name']."</option>";
-                                        $user2_json[$row['user_id']] = $row['user_name'];
+                                        $user2_json[$row['user_id']] = $row['user_name']; //array of usr name who can be tutors
                                     }
-                                    $user2_json = json_encode($user2_json);
+                                    $user2_json = json_encode($user2_json); //passed the array parameter for the jquery table plugins dropdown
                                     ?>
                                 </select> 
                                 <br/>
@@ -316,7 +322,7 @@ include('db_conn.php'); //db connection
                                         </span>
                                     </div>
                                 </div>
-                                <script type="text/javascript">
+                                <script type="text/javascript"> // javascript time plugin
                                     $(function () {
                                         $('#timepicker').datetimepicker({
                                             format: 'LT'
@@ -336,8 +342,15 @@ include('db_conn.php'); //db connection
             </div>
         </div>
 
-<!-------------------------------------------------- Modal for Adding and Removing Student-------------------------------------------------------------->
+<!-------------------------------------------------- Modal for Viewing Student List by UC/Lecturer----------------------------------------------------->
         
+        <?php //sql query that will allow the UC and lecturer to view their specific unit wise students enrollment
+        $std_unit_qry = "SELECT * FROM users A 
+                            INNER JOIN student_unit B ON A.user_id = B.student_id 
+                            INNER JOIN units C ON B.student_unit_id = C.unit_id 
+                            WHERE C.unit_coordinator = " . $_SESSION['loggedin_id'];
+        $result = mysqli_query($conn, $std_unit_qry);
+        ?>
         <div class="modal" tabindex="-1" role="dialog" id="remove"  aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -352,17 +365,24 @@ include('db_conn.php'); //db connection
                             <tr>
                                 <th>Student ID</th>
                                 <th>Name</th>
+                                <th>Unit Details</th>
                                 <th></th>
                             </tr>
+                            <?php
+                                while($row = mysqli_fetch_assoc($result)) {
+                            ?>
                             <tr>
-                                <td>PHP Content</td>
-                                <td>PHP Content</td>
-                                <td><a class="btn btn-danger" href="#">Remove</a></td>
+                                <td><?= $row['user_id'] ?></td>
+                                <td><?= $row['user_name'] ?></td>
+                                <td><?= $row['unit_code'] ?></td>
+                                <td><a class="btn btn-danger" id="#remove_student_unit">Remove</a></td>
                             </tr>
+                            <?php
+                                }
+                            ?>
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Save changes</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -385,7 +405,7 @@ include('db_conn.php'); //db connection
                             <label>Unit</label>
                             <select class="form-control" id="select_unit" name="select_unit">
                                 <option value="">Choose</option>
-                                <?php
+                                <?php //sql query for inner joining multiple tables with a condition and display order
                                 $sql= "SELECT * FROM units 
                                 INNER JOIN users ON units.unit_coordinator=users.user_id
                                 WHERE users.user_id=". $_SESSION['loggedin_id'] ." ORDER BY units.unit_id DESC;";
@@ -426,7 +446,7 @@ include('db_conn.php'); //db connection
             </div>
         </div>
         
-<!--------------------------------------------------------- Modal for Allocating Lecturer---------------------------------------------------------------->
+<!--------------------------------------------------------- Modal for Allocating Lecturer-------------------------------------------------------------->
         
         <div class="modal fade" id="add_modal_lec" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -461,9 +481,9 @@ include('db_conn.php'); //db connection
                                     $user1_json=array();
                                     while ($row =mysqli_fetch_array($result)){
                                         echo "<option value='".$row['user_id']."'>".$row['user_name']."</option>";
-                                        $user1_json[$row['user_id']] = $row['user_name'];
+                                        $user1_json[$row['user_id']] = $row['user_name']; // array for user name eligible for being a lecturer
                                     }
-                                    $user1_json = json_encode($user1_json);
+                                    $user1_json = json_encode($user1_json); //parameter pass for json_encode() and storing in a variable
                                     ?>
                                 </select>
                                 <br/>
@@ -488,7 +508,7 @@ include('db_conn.php'); //db connection
                                 </div>
                                 <script type="text/javascript">
                                     $(function () {
-                                        $('#datetimepicker4').datetimepicker({
+                                        $('#datetimepicker4').datetimepicker({ //javascript timepicker plugin
                                             format: 'LT'
                                         });
                                     });
@@ -523,23 +543,17 @@ include('db_conn.php'); //db connection
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="homepage_UWD.php">Home</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-header">Admin and Dashboard</li>
-                                <li><a href="#">Course Coordinator</a></li>
-                                <li><a href="#">Unit Coordinator</a></li>
-                                <li><a href="#">Lecturer</a></li>
-                                <li><a href="#">Tutor</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-header">Student CWS</li>
-                                <li><a href="#">Student</a></li>
-                            </ul>
-                        </li>
                         <li><a href="includes/logout.inc.php">Logout</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
-                        <li><a href="#">Welcome, Syed</a></li>
+                        <li><a href="#">Welcome, <?php
+                            $sql= "SELECT * FROM users WHERE user_id= ".$_SESSION['loggedin_id'].";";
+                            $result= mysqli_query($conn, $sql);
+                            while($row=mysqli_fetch_assoc($result)){
+                                echo $row["user_name"];
+                            }
+                            ?>
+                            </a></li>
                     </ul>
 
                 </div>
@@ -560,13 +574,14 @@ include('db_conn.php'); //db connection
             </div>
         </div>
         
-<!---------------------------------------------------------------Dashboard------------------------------------------------------------------------------->
+<!---------------------------------------------------------------Dashboard----------------------------------------------------------------------------->
         
         <section id="main">
             <div class="container">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="list-group">
+                                                <!--        Access based view                    -->
                             <a href="cms-dashboard.php" class="list-group-item main-color-bg">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
                             </a>
@@ -585,6 +600,8 @@ include('db_conn.php'); //db connection
                             <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
                             <a href="unitMaster.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit List (Master))<span class="badge">1</span></a>
                             <?php } ?>
+                            
+                            <a href="userProfile.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>User Profile<span class="badge">3</span></a>
                         </div>
 
                         <div class="well">
@@ -615,7 +632,7 @@ include('db_conn.php'); //db connection
                                 <h3 class="panel-title">Unit Lecture Management (DC Area)</h3>
                             </div>
                             <div class="panel-body">
-                                
+                                            <!--  This div will only appear for the admin                              -->
                                 <a class="btn btn-default" data-toggle="modal" data-target="#add_modal_lec">Add/Edit Lecturer</a>
                                 <a class="btn btn-link" data-toggle="modal" data-target="#remove">View</a>
                                 <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#add">Add</a>
@@ -660,7 +677,7 @@ include('db_conn.php'); //db connection
                         
                         
                         <?php if($_SESSION['user_role'] == "Unit Coordinator") {?>
-
+                                <!--   For Unit Coordinator                     -->
 
                         <div class="panel panel-default">
                             <div class="panel-heading main-color-bg">
@@ -680,8 +697,8 @@ include('db_conn.php'); //db connection
                             <div class="panel-body">
 
                                 <a class="btn btn-default" data-toggle="modal" data-target="#add_modal_lec">Add/Edit Lecturer</a>
-                                <a class="btn btn-link" data-toggle="modal" data-target="#remove">View</a>
-                                <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#add">Add</a>
+                                <a class="btn btn-link" data-toggle="modal" data-target="#remove">View Student List</a>
+                                <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#add">Add New Stuent</a>
                                 <div class="table-responsive">
                                     <table class="table table-striped table-hover" border="1px" id="editable_lec_table">
 
@@ -709,7 +726,7 @@ include('db_conn.php'); //db connection
                             </div>
                             <?php
                             } // end !empty if
-                            else {
+                            else {// if a user is a unit coordinator selected by DC but does not have any units under their name
                             ?>
                             <div class="panel-body">
                                 <p>NO Units</p>
@@ -745,7 +762,7 @@ include('db_conn.php'); //db connection
                                         </tr>
 
 
-                                        <?php
+                                        <?php //can view all the available tutorials
                                         $sql= "SELECT * FROM tutorials 
                                                 LEFT JOIN units ON tutorials.tutorial_unit = units.unit_id 
                                                 LEFT JOIN users ON tutorials.tutorial_tutor = users.user_id 
@@ -773,7 +790,7 @@ include('db_conn.php'); //db connection
                             <div class="panel-heading main-color-bg">
                                 <h3 class="panel-title">Unit Tutorial Management (UC Area)</h3>
                             </div>
-                            <?php
+                            <?php //can only view the tutorials that is associated with their Unit. They can create tutorials for their units
                             $sql= "SELECT * FROM tutorials 
                                                 LEFT JOIN units ON tutorials.tutorial_unit = units.unit_id 
                                                 LEFT JOIN users ON tutorials.tutorial_tutor = users.user_id 
@@ -781,12 +798,15 @@ include('db_conn.php'); //db connection
                                                 OR units.unit_lecturer = ".$_SESSION['loggedin_id']."
                                                 ORDER BY tutorials.tutorial_id DESC;";                    
                             $result= mysqli_query($conn, $sql);
-                            if(mysqli_num_rows($result) != 0){
+                            
 
                             ?>
                             <div class="panel-body">
+                                
                                 <div class="table-responsive">
                                     <a type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#editTute">Add Tutorial</a>
+                                    <?php
+                                    if(mysqli_num_rows($result) != 0){ ?>
                                     <table class="table table-striped table-hover" border="1px" id="editable_tute_table">
                                         <tr>
                                             <th>ID</th>
@@ -798,7 +818,7 @@ include('db_conn.php'); //db connection
                                             <th>Tutorial Time</th>
                                         </tr>
 
-
+                                        
                                         <?php
                                         
                                         while($row=mysqli_fetch_assoc($result)){
@@ -811,19 +831,20 @@ include('db_conn.php'); //db connection
 
 
                                     </table>
+
+                                    <?php
+                                    } // end !=0 if
+                                    else {
+                                    ?>
+                                    <table>
+                                        <tr><th>No Tutorials</th></tr>
+                                    </table>
+                                    <?php
+                                    }
+                                    ?>
                                 </div>                        
 
                             </div>
-                            <?php
-                            } // end !empty if
-                            else {
-                            ?>
-                            <div class="panel-body">
-                                <p>NO Units</p>
-                            </div>
-                            <?php
-                            }
-                            ?>
                         </div>
 
                         <?php } ?>
@@ -841,12 +862,15 @@ include('db_conn.php'); //db connection
                                                 WHERE units.unit_lecturer =  ".$_SESSION['loggedin_id']."
                                                 ORDER BY tutorials.tutorial_id DESC;";                    
                             $result= mysqli_query($conn, $sql);
-                            if(mysqli_num_rows($result) != 0){
 
                             ?>
                             <div class="panel-body">
                                 <div class="table-responsive">
                                     <a type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#editTute">Add Tutorial</a>
+                                    <?php
+                                    if(mysqli_num_rows($result) != 0){ //when the sql query result is not 0
+
+                                    ?>
                                     <table class="table table-striped table-hover" border="1px" id="editable_tute_table">
                                         <tr>
                                             <th>ID</th>
@@ -876,19 +900,19 @@ include('db_conn.php'); //db connection
 
 
                                     </table>
+                                    <?php
+                                    } // end !=0 if
+                                    else { //when there is no tutorials created by UC, DC or the lecturer themselves for the unit
+                                    ?>
+                                    <table class="">
+                                        <tr><th>No Tutorials</th></tr>
+                                    </table>
+                                    <?php
+                                    }
+                                    ?>
                                 </div>                           
 
                             </div>
-                            <?php
-                            } // end !empty if
-                            else {
-                            ?>
-                            <div class="panel-body">
-                                <p>NO Units</p>
-                            </div>
-                            <?php
-                            }
-                            ?>
                         </div>
                         <?php } ?>
                         
@@ -912,7 +936,7 @@ include('db_conn.php'); //db connection
                                         <th>Tutorial Day</th>
                                         <th>Tutorial Time</th>
                                     </tr>
-                                    <?php
+                                    <?php //only tutor can see this area //cannot edit the table as there is no plugins associated with this table
                                     $sql= "SELECT * FROM tutorials 
                                                 LEFT JOIN units ON tutorials.tutorial_unit = units.unit_id 
                                                 LEFT JOIN users ON tutorials.tutorial_tutor = users.user_id 
@@ -940,18 +964,18 @@ include('db_conn.php'); //db connection
         
         <script>
 
-            $(document).ready(function() {
+            $(document).ready(function() { //javascript for adding lecture to a unit when the button with id= add_lec_buttonInModal clicked
                 $("#add_lec_buttonInModal").click(function() {
                     var inputCode = $("#lecture_unit").val();
                     var inputLec = $("#lecturer_lecturer").val();
                     var inputTime = $("#lecture_time").val();
                     var inputLecDay = $("#lecture_day").val();
 
-                    if (inputCode == '' || inputLec == '' || inputTime == '' || inputLecDay == '') {
+                    if (inputCode == '' || inputLec == '' || inputTime == '' || inputLecDay == '') { //check for empty fields
                         alert("Add Lecture: Insertion Failed Some Fields are Blank....!!");
                     } else {
                         // Returns successful data submission message when the entered information is stored in database.
-                        $.post("insertLecture.inc.php", {
+                        $.post("insertLecture.inc.php", { // insertion page post php work
                             inputCode1: inputCode,                            
                             inputLec1: inputLec,                            
                             inputTime1: inputTime,                            
@@ -964,14 +988,14 @@ include('db_conn.php'); //db connection
                 });
             }); 
             
-            $(document).ready(function(){
+            $(document).ready(function(){ //edit lecture table plugin
 
                 $('#editable_lec_table').Tabledit({
                     url:'action_edit_lec.inc.php',
                     columns:{
                         identifier:[0, "unit_id"],
                         editable:[[5, 'unit_lecturer', '<?php echo $user1_json; ?>'], [6, 'lecture_day'], [7, 'lecture_time']]
-                    },
+                    }, // user1_jason will create a dropdown in the table containing the lecturer role staffs //only columns 5,6 & 7 are editable
                     restoreButton: false,
                     onSuccess: function(data, textStatus, jqXHR){
                         if(data.action=='delete'){
@@ -983,7 +1007,7 @@ include('db_conn.php'); //db connection
             });
             
             $(document).ready(function() {
-                $("#add_tutor").click(function() {
+                $("#add_tutor").click(function() { //adding tutorial modal javascript
                     var tutorial_name = $("#tutorial_name").val();
                     var tutorial_unit = $("#tutorial_unit").val();
                     var tutorial_tutor = $("#tutorial_tutor").val();
@@ -991,7 +1015,7 @@ include('db_conn.php'); //db connection
                     var tutorial_day = $("#tutorial_day").val();
                     var tutorial_time = $("#tutorial_time").val();
 
-                    if (tutorial_name == '' || tutorial_unit == '' || tutorial_tutor == '' || tutorial_size == '' || tutorial_day == '' || tutorial_time == '') {
+                    if (tutorial_name == '' || tutorial_unit == '' || tutorial_tutor == '' || tutorial_size == '' || tutorial_day == '' || tutorial_time == '') { //empty fields check
                         alert("Add Lecture: Insertion Failed Some Fields are Blank....!!");
                     } else {
                         // Returns successful data submission message when the entered information is stored in database.
@@ -1010,7 +1034,7 @@ include('db_conn.php'); //db connection
                 });
             });
             
-            $(document).ready(function(){
+            $(document).ready(function(){ //tutorial table edit plugin
 
                 $('#editable_tute_table').Tabledit({
                     url:'action_edit_tute.inc.php',
@@ -1029,19 +1053,19 @@ include('db_conn.php'); //db connection
             });
             
             $(document).ready(function() {
-                $("#add_student_buttonInModal").click(function() {
+                $("#add_student_buttonInModal").click(function() { //add student to unit modal submit will trigger the javascript
                     var unitId = $("#select_unit").val();
-                    var userId = $("#select_student").val();
+                    var userId = $("#select_student").val(); //user input
 
                     if (unitId == '' || userId == '') {
-                        alert("Add Student: Insertion Failed Some Fields are Blank....!!");
+                        alert("Add Student: Insertion Failed Some Fields are Blank....!!"); //field blank check
                     } else {
                         // Returns successful data submission message when the entered information is stored in database.
                         $.post("insertStudent.inc.php", {
                             unitId1: unitId,                            
                             userId1: userId
                         }, function(data) {
-                            alert(data);
+                            alert(data); //will show the echo alert from insertStudent.inc.php page
                             $('#add_student_form')[0].reset(); // To reset form fields
                         });
                     }

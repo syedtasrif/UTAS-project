@@ -55,7 +55,7 @@
                         <input type="text" placeholder="Enter Email" name="mail" id= "email" class="form-control" required>
                         <br/>
                         <label for="pwd"><b>Password</b></label>
-                        <input type="password" placeholder="Enter Password" name="pwd" id= 'pass' class="form-control" required>
+                        <input type="password" placeholder="Password minimum 6 letters including special characters digits and capital letters" name="pwd" id= 'pass' class="form-control" required>
                         <br/>
                         <label for="pwd-repeat"><b>Confirm Password</b></label>
                         <input type="password" placeholder="Repeat Password" name="pwd-repeat" id="confpass" class="form-control" required>
@@ -70,50 +70,46 @@
             </div>
         </main>
         <script>
-            $(document).ready(function() {
+            $(document).ready(function() { //javascript triggering when clicked the signup button 
                 $('.signup-submit').click(function(event){
                     data = $('#pass').val();
-                    inp=$("#confpass").val();
+                    inp=$("#confpass").val(); //user input values in the form
                     var length=inp.length;
                     var len = data.length;
                     if(len < 1) {
-                        alert("Password cannot be blank");
+                        alert("Password cannot be blank"); //password cannot be blank
                         // Prevent form submission
                         event.preventDefault();
                     }
                     if(length<1){
-                        alert("Please Confirm Your Password");
+                        alert("Please Confirm Your Password"); //Repeated password cannot be blank
                         // Prevent form submission
                         event.preventDefault();
                     }
                     else if(data!=inp) {
-                        alert("Password and Confirm Password don't match");
+                        alert("Password and Confirm Password don't match"); //if password and repeated password does not match
                         // Prevent form submission
                         event.preventDefault();
                     }
                 });
             });
             $(document).ready(function(){
-                // set initially button state hidden
-                //$('.signupbtn').hide();
-                // use keyup event on email field
+
                 $("#email").keyup(function(){
                     if(validateEmail()){
                         // if the email is validated
                         // set input email border green
-                        $("#email").css("border","2px solid green");
+                        $("#email").css("border","2px solid green"); //email validation front end check 
 
                     }
                     else{
-                        // if the email is not validated
-                        // set border red
                         $("#email").css("border","2px solid red");
 
                     }
 
                 });
                 // use keyup event on password
-                $("#pass").keyup(function(){
+                $("#pass").keyup(function(){ //keyup function check for validation on a each key typed by the user
                     // check
                     if(validatePassword()){
                         // set input password border green
@@ -130,7 +126,7 @@
 
             function validateEmail(){
                 // get value of input email
-                var email=$("#email").val();
+                var email=$("#email").val(); //email input field validation
                 // use reular expression
                 var reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
                 if(reg.test(email)){
@@ -140,7 +136,7 @@
                 }
 
             }
-            function validatePassword(){
+            function validatePassword(){ //password frontend validation
                 //get input password value
                 var pass=$("#pass").val();
                 // check it s length
@@ -165,7 +161,7 @@
             }  
 
 
-            $(document).ready(function(){
+            $(document).ready(function(){ //form options visibility based on user inputs
                 $("#roles").change(function(){
                     $(this).find("option:selected").each(function(){
                         var optionValue = $(this).attr("value");
@@ -174,7 +170,7 @@
                             $("." + optionValue).show();
                         }
                         else{
-                            $(".staff").hide();
+                            $(".staff").hide(); //hide() function is used to hide a div or an input field
                         }
                     });
                 }).change();

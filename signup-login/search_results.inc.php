@@ -5,13 +5,13 @@ include('db_conn.php'); //db connection
 
 
     $search=mysqli_real_escape_string($conn, $_POST['user_input']);
-    $sql="SELECT * FROM units WHERE unit_code LIKE'%$search%' OR unit_name LIKE '%$search%' OR unit_campus LIKE '%$search%' OR unit_semester LIKE '%$search%'";
+    $sql="SELECT * FROM units WHERE unit_code LIKE'%$search%' OR unit_name LIKE '%$search%' OR unit_campus LIKE '%$search%' OR unit_semester LIKE '%$search%'"; //searching based on user input 
     $result=mysqli_query($conn, $sql);
     $queryResult= mysqli_num_rows($result);
     
     
 
-    if($queryResult>0){
+    if($queryResult>0){ //query result loop to display it in a tabular format
         while($row=mysqli_fetch_assoc($result)){
             echo "<tr>
     <th>Unit Code</th>
@@ -39,7 +39,7 @@ include('db_conn.php'); //db connection
     }
     else{
         echo '<script language="javascript">';
-        echo 'alert("No Results Found")';
+        echo 'alert("No Results Found")'; //alert mesage
         echo '</script>';
     }
 

@@ -15,7 +15,7 @@ include('db_conn.php'); //db connection
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Dashboard</title>
+        <title>Master Unit Page</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -63,9 +63,9 @@ include('db_conn.php'); //db connection
                                     $user_json=array();
                                     while ($row =mysqli_fetch_array($result)){
                                         echo "<option value='".$row['user_id']."'>".$row['user_name']."</option>";
-                                        $user_json[$row['user_id']] = $row['user_name'];
+                                        $user_json[$row['user_id']] = $row['user_name']; //json array to fetch the user name who can be UC and can be used later for edit table dropdowns
                                     }
-                                    $user_json = json_encode($user_json);
+                                    $user_json = json_encode($user_json); //parameter passing
                                     ?>
                                 </select>
 
@@ -121,7 +121,7 @@ include('db_conn.php'); //db connection
                                     </div>
                                 </div>
                                 <script type="text/javascript">
-                                    $(function () {
+                                    $(function () { //time pickeer javascript plugin function
                                         $('#datetimepicker3').datetimepicker({
                                             format: 'LT'
                                         });
@@ -189,23 +189,17 @@ include('db_conn.php'); //db connection
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="homepage_UWD.php">Home</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-header">Admin and Dashboard</li>
-                                <li><a href="#">Course Coordinator</a></li>
-                                <li><a href="#">Unit Coordinator</a></li>
-                                <li><a href="#">Lecturer</a></li>
-                                <li><a href="#">Tutor</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-header">Student CWS</li>
-                                <li><a href="#">Student</a></li>
-                            </ul>
-                        </li>
                         <li><a href="login.php">Logout</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
-                        <li><a href="#">Welcome, Syed</a></li>
+                        <li><a href="#">Welcome, <?php //user name display of the person who just logged in 
+                            $sql= "SELECT * FROM users WHERE user_id= ".$_SESSION['loggedin_id'].";";
+                            $result= mysqli_query($conn, $sql);
+                            while($row=mysqli_fetch_assoc($result)){
+                                echo $row["user_name"];
+                            }
+                            ?>
+                            </a></li>
                     </ul>
                 </div>
             </div>
@@ -251,6 +245,8 @@ include('db_conn.php'); //db connection
                             <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
                             <a href="unitMaster.php" class="active list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit List (Master))<span class="badge">1</span></a>
                             <?php } ?>
+                            
+                            <a href="userProfile.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>User Profile<span class="badge">3</span></a>
                         </div>
 
 <!-------------------------------------------------------------Just for visualization------------------------------------------------------------------->
@@ -295,7 +291,7 @@ include('db_conn.php'); //db connection
                                         </tr>
 
 
-                                        <?php
+                                        <?php //Table display for all the units with unit-coordinator names and the admin will be able to edit it
                                         $sql= "SELECT * FROM units INNER JOIN users ON units.unit_coordinator = users.user_id ORDER BY units.unit_id DESC;";                    
                                         $result= mysqli_query($conn, $sql);
 
@@ -324,7 +320,7 @@ include('db_conn.php'); //db connection
         </section>
         
         <script>
-            $(document).ready(function() {
+            $(document).ready(function() { //search modal form submit will trigger this function to work
                 $("#submitButton").on("click", function(event) {
                     event.preventDefault();
                     event1();
@@ -347,24 +343,24 @@ include('db_conn.php'); //db connection
             });
 
 
-            $(document).ready(function(){
+            $(document).ready(function(){ //edit table plugin
 
                 $('#editable_table').Tabledit({
                     url:'action.inc.php',
                     columns:{
                         identifier:[0, "unit_id"],
-                        editable:[[1, 'unit_code'], [2, 'unit_name'], [3, 'unit_semester'], [4, 'unit_campus'], [5, 'unit_coordinator', '<?php echo $user_json; ?>']]
+                        editable:[[1, 'unit_code'], [2, 'unit_name'], [3, 'unit_semester'], [4, 'unit_campus'], [5, 'unit_coordinator', '<?php echo $user_json; ?>']] // can edit all columns
                     },
                     restoreButton: false,
                     onSuccess: function(data, textStatus, jqXHR){
                         if(data.action=='delete'){
-                            $('#'+data.id).remove();
+                            $('#'+data.id).remove();// delete unit 
                         }                       
                     }
                 }); 
             });
 
-            $(document).ready(function() {
+            $(document).ready(function() {//unit modal form submit post variables
                 $("#addButton").click(function() {
                     var inputCode = $("#inputCode").val();
                     var inputName = $("#inputName").val();                    
@@ -372,7 +368,7 @@ include('db_conn.php'); //db connection
                     var inputUC = $("#inputUC").val();
                     var inputCamp = $("#inputCamp").val();
 
-                    if (inputCode == '' || inputName == '' || inputSem == '' || inputCamp == '' || inputUC == '') {
+                    if (inputCode == '' || inputName == '' || inputSem == '' || inputCamp == '' || inputUC == '') {//empty field check
                         alert("Insertion Failed Some Fields are Blank....!!");
                     } else {
                         // Returns successful data submission message when the entered information is stored in database.

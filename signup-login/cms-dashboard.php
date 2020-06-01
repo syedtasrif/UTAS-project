@@ -2,12 +2,15 @@
  session_start();
 if(!isset($_SESSION['loggedin_id'])){
     header("Location: login.php?error=anonymousUser");    
-}
+} //session start ensuring happened by clicking the login page
+?>
+<?php
+include('db_conn.php'); //db connection
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Student Area | Dashboard</title>
+  <title>CMS-Dashboard</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +22,8 @@ if(!isset($_SESSION['loggedin_id'])){
         
 </head>
     <body>
-        <!--Navigation-->
+<!------------------------------------------------------------Navigation------------------------------------------------------------------------------->
+        
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -34,29 +38,24 @@ if(!isset($_SESSION['loggedin_id'])){
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="homepage_UWD.php">Home</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-header">Admin and Dashboard</li>
-                                <li><a href="#">Course Coordinator</a></li>
-                                <li><a href="#">Unit Coordinator</a></li>
-                                <li><a href="#">Lecturer</a></li>
-                                <li><a href="#">Tutor</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-header">Student CWS</li>
-                                <li><a href="#">Student</a></li>
-                          </ul>
-                        </li>
                         <li><a href="login.php">Logout</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
-                        <li><a href="#">Welcome, Syed</a></li>
+                        <li><a href="#">Welcome, <?php
+                            $sql= "SELECT * FROM users WHERE user_id= ".$_SESSION['loggedin_id'].";"; //select only the user row based on loggedin id
+                            $result= mysqli_query($conn, $sql);
+                            while($row=mysqli_fetch_assoc($result)){
+                                echo $row["user_name"]; //logged in user name display on the navbar
+                            }
+                            ?>
+                            </a></li>
                     </ul>
                 </div>
             </div>
         </div>
         
-    <!--Footer-->
+<!----------------------------------------------------------------------Footer------------------------------------------------------------------------->
+        
         <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-text pull-left">
@@ -70,13 +69,15 @@ if(!isset($_SESSION['loggedin_id'])){
             </div>
         </div>
         
-        <!--Dashboard-->
+<!-----------------------------------------------------------------Dashboard---------------------------------------------------------------------------->
         
         <section id="main">
             <div class="container">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="list-group">
+<!------------------------------------------------------------------Buttons on dahboard bar visibility based on role---------------------------------->
+                            
                             <a href="cms-dashboard.php" class="list-group-item active main-color-bg">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
                             </a>
@@ -95,9 +96,12 @@ if(!isset($_SESSION['loggedin_id'])){
                             <a href="academicStaffList.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
                             <a href="unitMaster.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit List (Master))<span class="badge">1</span></a>
                             <?php } ?>
+                            
+                            <a href="userProfile.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>User Profile<span class="badge">3</span></a>
+
                         </div>
                         
-               <!--Just for visualization-->
+<!--------------------------------------------------------------------------Just for visualization---------------------------------------------------->
                         <div class="well">
                             <h4>Disk Space Used</h4>
                             <div class="progress">
@@ -113,7 +117,7 @@ if(!isset($_SESSION['loggedin_id'])){
                             </div>
                         </div>
                     </div>
-            <!---No Content--->
+<!---------------------------------------------------------------------------No Content------------------------------------------------------------->
                     <div class="col-md-9">
                         
                     </div>

@@ -63,7 +63,7 @@ include('db_conn.php'); //db connection
     </head>
     <body>
 
-
+<!------------------------------------------------------------------Navigation Bar---------------------------------------------------------------------->
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -78,18 +78,6 @@ include('db_conn.php'); //db connection
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="homepage_UWD.php">Home</a></li>
-                        <li><a href="#">About</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-header">Admin and Dashboard</li>
-                                <li><a href="login.php">Staff</a></li>                      
-                                <li class="divider"></li>
-                                <li class="dropdown-header">Student CWS</li>
-                                <li><a href="login.php">Student</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Contact</a></li>
                     </ul>
 
                 </div>
@@ -168,7 +156,7 @@ include('db_conn.php'); //db connection
             </div>
         </div>
         <script>
-            function myFunction() {
+            function myFunction() { //filter javascript plugins for the available units used for decorative purpose only in this assignemnt
                 var input, filter, ul, li, a, i, txtValue;
                 input = document.getElementById("myInput");
                 filter = input.value.toUpperCase();

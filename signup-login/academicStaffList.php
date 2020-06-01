@@ -1,10 +1,10 @@
 <?php
-session_start();
-if(!isset($_SESSION['loggedin_id'])){
+session_start(); //session start will bring the variables that has been created in login.inc.php page
+if(!isset($_SESSION['loggedin_id'])){ //people won't be able to enter this page just by typing the url
     header("Location: login.php?error=anonymousUser");    
 }
 
-if($_SESSION['user_role_allocated'] != 'admin') {
+if($_SESSION['user_role_allocated'] != 'admin') { //only admin can enter this page
     header("Location: cms-dashboard.php?msg=accessdenied");    
 }
 ?>
@@ -14,7 +14,7 @@ include('db_conn.php'); //db connection
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Admin Dashboard</title>
+        <title>Master Staff List</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,16 +25,15 @@ include('db_conn.php'); //db connection
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
         <!--Timepicker plugins compatible for bootrap versioin 3 only-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"> 
         <script src="jquery.tabledit.js" type="text/javascript"></script>
         <!-- Link to use icon-->
-
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"> 
 
     </head>
     <body>
 
-        <!-- Add New Academic Staff Modal -->
+<!---------------------------------------------------------------- Add New Academic Staff Modal -------------------------------------------------------->
 
         <div class="modal fade" id="insertNewStaff" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -47,12 +46,14 @@ include('db_conn.php'); //db connection
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
+<!--                            Form submission will happen using post method-->
                             <form id="add-form" method="POST">
 
                                 <label for="name"><b>Full Name</b></label>
                                 <input type="text" placeholder="Your Name.." id="user_name" class="form-control" required>
                                 <br/>
-                                <label for="Role"><b>Role</b></label>
+                                                    <!-- Role selection -->
+                                <label for="Role"><b>Role</b></label> 
                                 <select name="user_role" id="user_role" class="form-control" required>
                                     <option value="">Select</option>
                                     <option value="staff">Staff</option>
@@ -85,15 +86,15 @@ include('db_conn.php'); //db connection
 
                     </div>
                     <div class="modal-footer">
+                        <!--once close button will be clicked, the page will be reloaded-->
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close" onclick="javascript:window.location.reload()">Close</button>
                     </div>
                 </div>
             </div>
         </div>
 
-
-
-
+<!-----------------------------------------Role Allocation Modal---------------------------------------------------------------------------------------->
+        
         <div class="modal fade" id="insertNewStaffrole" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -106,7 +107,7 @@ include('db_conn.php'); //db connection
                     <div class="modal-body">
                         <div class="form-group">
                             <?php
-                            $staffsql = "SELECT * FROM users WHERE  user_role != 'student' AND  user_role != 'admin'";
+                            $staffsql = "SELECT * FROM users WHERE  user_role != 'student' AND  user_role != 'admin'"; //filtering the admin and students
                             $staffresult = mysqli_query($conn, $staffsql);
                             ?>
                             <form id="add-form-role" method="POST">
@@ -143,13 +144,15 @@ include('db_conn.php'); //db connection
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close" onclick="javascript:window.location.reload()">Close</button>
+                            <!-------------------------------------Page reload once press closed------------------------------------------------>
+                        
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close" onclick="javascript:window.location.reload()">Close</button> 
                     </div>
                 </div>
             </div>
         </div>
 
-        <!--Navigation-->
+<!-----------------------------------------------------------------------------Navigation--------------------------------------------------------------->
 
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
@@ -162,32 +165,27 @@ include('db_conn.php'); //db connection
                     </button>
                     <a class="navbar-brand" href="#"> UDW </a>
                 </div>
+<!-- Navigation bar buttons               -->
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="homepage_UWD.php">Home</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-header">Admin and Dashboard</li>
-                                <li><a href="#">Course Coordinator</a></li>
-                                <li><a href="#">Unit Coordinator</a></li>
-                                <li><a href="#">Lecturer</a></li>
-                                <li><a href="#">Tutor</a></li>
-                                <li class="divider"></li>
-                                <li class="dropdown-header">Student CWS</li>
-                                <li><a href="#">Student</a></li>
-                            </ul>
-                        </li>
                         <li><a href="includes/logout.inc.php">Logout</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
-                        <li><a href="#">Welcome, Syed</a></li>
+                        <li><a href="#">Welcome, <?php // one can see their name after login at hte navigation bar
+                            $sql= "SELECT * FROM users WHERE user_id= ".$_SESSION['loggedin_id'].";";
+                            $result= mysqli_query($conn, $sql);
+                            while($row=mysqli_fetch_assoc($result)){
+                                echo $row["user_name"];
+                            }
+                            ?>
+                            </a></li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <!--Footer-->
+<!-------------------------------------------------------------------------------Footer--------------------------------------------------------------->
 
         <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
             <div class="container-fluid">
@@ -202,7 +200,8 @@ include('db_conn.php'); //db connection
             </div>
         </div>
 
-        <!--Dashboard-->
+<!------------------------------------------------------------------------------Dashboard--------------------------------------------------------------->
+        
         <section id="main">
             <div class="container">
                 <div class="row">
@@ -211,8 +210,8 @@ include('db_conn.php'); //db connection
                             <a href="cms-dashboard.php" class="list-group-item main-color-bg">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
                             </a>
-
-                            <?php if($_SESSION['user_role_allocated'] == 'student') {?>
+                                            <!--     Dashboard button option will appear based on acces level                       -->
+                            <?php if($_SESSION['user_role_allocated'] == 'student') {?> 
                             <a href="enroll.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Enroll<span class="badge">12</span></a>
                             <a href="timetable.php" class="list-group-item"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Individual Timetable<span class="badge">33</span></a>
                             <a href="tuteAllocate.php" class="list-group-item"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>Tutorial Allocation<span class="badge">203</span></a>
@@ -226,9 +225,11 @@ include('db_conn.php'); //db connection
                             <a href="academicStaffList.php" class="active list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Academic Staff (Master)<span class="badge">197</span></a>
                             <a href="unitMaster.php" class="list-group-item"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>Unit List (Master))<span class="badge">1</span></a>
                             <?php } ?>
+                            
+                            <a href="userProfile.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>User Profile<span class="badge">3</span></a>
                         </div>
 
-                        <!--Just for visualization-->
+<!------------------------------------------------------------------------Just for visualization------------------------------------------------------>
                         <div class="well">
                             <h4>Disk Space Used</h4>
                             <div class="progress">
@@ -244,7 +245,8 @@ include('db_conn.php'); //db connection
                             </div>
                         </div>
                     </div>
-                    <!---Content--->
+<!-------------------------------------------------------------------------------Content---------------------------------------------------------------->
+                    
                     <div class="col-md-9">
                         <div class="panel-heading main-color-bg">
                             <h3 class="panel-title">Staff List</h3>                           
@@ -261,11 +263,11 @@ include('db_conn.php'); //db connection
                                         <th>Staff Email</th>
                                     </tr>
                                     <?php
-                                    $sql= "SELECT * FROM users WHERE user_role != 'student'";                    
+                                    $sql= "SELECT * FROM users WHERE user_role != 'student'"; //selecting database table users and rows which are not students                    
                                     $result= mysqli_query ($conn, $sql);
 
 
-                                    while($row=mysqli_fetch_assoc($result)){
+                                    while($row=mysqli_fetch_assoc($result)){ //loop to display the rows based on the selection results
                                         echo "<tr><td>".$row["user_id"]."</td><td>".$row["user_name"]."</td><td>".$row["user_qualification"]."</td><td>".$row["user_expertise"]."</td><td>".$row["user_unavailability"]."</td><td>".$row["user_email"]."</td></tr>";
                                     }
                                     echo "</table>";                 
@@ -275,9 +277,10 @@ include('db_conn.php'); //db connection
                             </div>
 
                         </div>
-                        <a type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertNewStaff">Add New Staff</a>
+<!---------------------------------------------------------------Modal activate button------------------------------------------------------------->
+                        <a type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertNewStaff">Add New Staff</a> 
                         
- <!------------------------------------------------ role allocation------------------------------------------------------------------------------------->
+ <!--------------------------------------------------------- Content for Role Allocation---------------------------------------------------------------->
                         
                         <div class="panel-heading main-color-bg">
                             <h3 class="panel-title">Staff Role Allocation</h3>                           
@@ -316,17 +319,17 @@ include('db_conn.php'); //db connection
         </section>
         
         <script>
-            $(document).ready(function(){
+            $(document).ready(function(){ //table edit plugin 
                 $('#editable_table').Tabledit({
                     url:'academicStaffList_action.inc.php',
                     columns:{
-                        identifier:[0, "user_id"],
+                        identifier:[0, "user_id"], //will work according to id selection
                         editable:[[1, 'user_name'], [2, 'user_qualification'], [3, 'user_expertise'], [4, 'user_unavailability'], [5, 'user_email']]
-                    },
+                    }, //we can edit these columns
                     restoreButton: false,
                     onSuccess: function(data, textStatus, jqXHR){
                         if(data.action=='delete'){
-                            $('#'+data.id).remove();
+                            $('#'+data.id).remove(); //deletion of rows
                         }                       
                     }
                 }); 
@@ -334,8 +337,8 @@ include('db_conn.php'); //db connection
 
 
             $(document).ready(function(){
-                $("#addStaffButton").click(function() {
-                    var user_name = $("#user_name").val();
+                $("#addStaffButton").click(function() { //fetching variables from the modal form
+                    var user_name = $("#user_name").val(); //user input values
                     var user_pwd = $("#user_pwd").val();
                     var user_email = $("#user_email").val();
                     var user_expertise = $("#user_expertise").val();
@@ -343,10 +346,10 @@ include('db_conn.php'); //db connection
                     var user_qualification = $("#user_qualification").val();
 
                     if (user_name == '' || user_pwd == '' || user_email == '' || user_expertise == '' || user_role == '' || user_qualification == '') {
-                        alert("Insertion Failed Some Fields are Blank....!!");
+                        alert("Insertion Failed Some Fields are Blank....!!"); //check for empty fields
                     } else {
                         // Returns successful data submission message when the entered information is stored in database.
-                        $.post("insertNewStaff.inc.php", {                                           
+                        $.post("insertNewStaff.inc.php", {   //add staff button on modal will take user to this page and post variables                                        
                             user_name1: user_name,
                             user_pwd1: user_pwd,
                             user_email1: user_email,
@@ -370,7 +373,7 @@ include('db_conn.php'); //db connection
                         alert("Insertion Failed Some Fields are Blank....!!");
                     } else {
                         // Returns successful data submission message when the entered information is stored in database.
-                        $.post("insertNewStaffRole.inc.php", {                                           
+                        $.post("insertNewStaffRole.inc.php", {  //insertion of new staff role will happen in this page                                         
                             user_name1: user_name,
                             user_role1: user_role,
                             user_role_allocated: user_role_allocated                           

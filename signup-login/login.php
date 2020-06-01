@@ -3,6 +3,7 @@
         <title>
             Login Form
         </title>
+                        <!--CSS page to style the login page-->
         <link rel="stylesheet" type="text/css" href="CSS/formStyle.css">
         <body>
             <div class="loginbox">
@@ -14,7 +15,7 @@
                     <p>Password</p>
                     <input type="password" name="pwd" placeholder="Password">
                     <input type="submit" name="login-submit" value="Login">
-                    <a href="#">Lost your password?</a><br>
+                    <a href="homepage_UWD.php">Back to Main</a><br>
                     <a href="register.php">Don't have an account?</a>
                     
                 </form>

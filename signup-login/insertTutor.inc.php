@@ -10,7 +10,7 @@ $tutorial_time2 = $_POST['tutorial_time1'];
 
 $query = "INSERT INTO tutorials(tutorial_name, tutorial_unit, tutorial_tutor, tutorial_size, tutorial_day, tutorial_time) VALUES ('$tutorial_name2','$tutorial_unit2', '$tutorial_tutor2', '$tutorial_size2', '$tutorial_day2', '$tutorial_time2')"; //Insert query
 
-if(mysqli_query($conn, $query)){
+if(mysqli_query($conn, $query)){ //checking if the query statment is alright or not
     echo "Data Submitted succesfully";
 }
 mysqli_close($conn); // Connection Closed.
